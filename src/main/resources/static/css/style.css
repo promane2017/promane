@@ -1,0 +1,23 @@
+.error-input {
+    border-color: #b94a48;
+    margin-left: 5px;
+}
+.error-messages {
+    color: #b94a48;
+}
+.input-box {
+    margin-bottom: 10px;
+}
+
+.button-bottom {
+	margin-bottom: 10px
+}
+
+.link-setting{
+    font-size: x-large;
+}
+
+.table-padd{
+	margin: 10px;
+	margin-bottom: 30px
+}
