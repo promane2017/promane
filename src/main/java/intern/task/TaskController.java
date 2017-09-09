@@ -145,6 +145,7 @@ public class TaskController {
         model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
         return "tasks/edit";
     }
+
     @PostMapping("tasks/delete")
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
         taskService.deleteTask(id);
@@ -169,7 +170,7 @@ public class TaskController {
         List<Comment> comments = taskService.findComment(taskId);
         model.addAttribute("comments", comments);
         taskService.update(form, taskId);
-        return "tasks/edit";
+        return "redirect:edit";
     }
 
     @PostMapping(path = "tasks/{taskId}/requests")

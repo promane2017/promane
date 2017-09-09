@@ -25,9 +25,9 @@
           <tbody>
             <tr th:each="notice,stat: ${notices}" th:classappend="${stat.index}lt${unReadSize}?success:''">
                 <td>
-                  <a th:utext="${notice.message}">
+                  <p th:utext="${notice.message}">
                       タスクの期限が迫ってます
-                  </a>
+                  </p>
                 </td>
                 <td th:text="${#dates.format(notice.createdAt, 'yyyy/MM/dd HH:mm:ss')}">
                     dummy_time
