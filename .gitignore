@@ -23,3 +23,5 @@ nbdist/
 ### clang
 .clang-format
 src/main/resources/data.sql
+
+target/
