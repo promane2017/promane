@@ -29,8 +29,6 @@ public class TaskController {
     @Autowired
     MemberRepository memberRepository;
     @Autowired
-    TaskuserService taskuserService;
-    @Autowired
     MemberService memberService;
     @Autowired
     RequestService requestService;
@@ -137,8 +135,8 @@ public class TaskController {
         model.addAttribute("progress", progress);
 
         List<Comment> comments = task.getComments();
-        String logged_in_user_id = userService.getLoggedInUserId();
-        model.addAttribute("logged_in_user_id", logged_in_user_id);
+        String loggedInUserId = userService.getLoggedInUserId();
+        model.addAttribute("loggedInUserId", loggedInUserId);
         model.addAttribute("comments", comments);
 
         Project project = projectService.findProject(projectId);
@@ -159,24 +157,27 @@ public class TaskController {
         if (result.hasErrors()) {
             return null;
         }
-        String logged_in_user_id = userService.getLoggedInUserId();
-        model.addAttribute("logged_in_user_id", logged_in_user_id);
-
-        if (taskuserService.isAlreadyAssigenedUser(logged_in_user_id, taskId)) {
+        String loggedInUserId = userService.getLoggedInUserId();
+        String param;
+        if (taskService.isAlreadyAssigenedUser(loggedInUserId, taskId)) {
             taskService.update(form, taskId);
+            param = "updated";
+        }else{
+            param = "notAssigned";
         }
         Integer progress = taskService.findProgress(taskId);
         model.addAttribute("progress", progress);
         List<Comment> comments = taskService.findComment(taskId);
         model.addAttribute("comments", comments);
-        taskService.update(form, taskId);
-        return "redirect:edit";
+        return "redirect:edit?"+param;
     }
 
     @PostMapping(path = "tasks/{taskId}/requests")
     String taskRequest(@PathVariable("projectId") Integer projectId,
                        @PathVariable("taskId") Integer taskId) {
         User user = userService.findUser(userService.getLoggedInUserId());
+        Task task = taskService.findById(taskId);
+        String taskName = task.getName();
         if (!requestService.isAlreadyRequest(user.getId(), taskId)) {
             Request request = new Request();
             request.setTask(taskService.findById(taskId));
@@ -187,7 +188,7 @@ public class TaskController {
             for (Member member : MemberList) {
                 if (userService.checkRoot(member.getUser().getId(), projectId)) {
                     notice.setUserId(member.getUser().getId());
-                    notice.setMessage("<a href=\"/projects/"+projectId+"/tasks/"+taskId+"/edit\">タスク申請が来ています</a>");
+                    notice.setMessage("<a href=\"/projects/"+projectId+"/tasks/"+taskId+"/edit\">タスク「"+taskName+"」へのアサイン申請が来ています</a>");
                     notice.setCreatedAt(new Date());
                     notice.setUnRead(true);
                     noticeService.create(notice);
@@ -196,6 +197,7 @@ public class TaskController {
         }
         return "redirect:/projects/{projectId}/tasks?success_request";
     }
+
     @PostMapping(path = "tasks/{taskId}/assignees/request_delete")
     String deleteRequest(@RequestParam String userId,
                           @PathVariable("projectId") Integer projectId,

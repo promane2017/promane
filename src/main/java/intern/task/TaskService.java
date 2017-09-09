@@ -76,9 +76,16 @@ public class TaskService {
         return taskRepository.findOne(task_id).getProgress();
     }
 
-    public List<Comment> findComment(Integer task_id) { 
+    public List<Comment> findComment(Integer task_id) {
     		Task task = findById(task_id);
         List<Comment> comments = task.getComments();
         return comments;
+    }
+
+    public boolean isAlreadyAssigenedUser(String loggedInUserId, Integer taskId){
+      Task task = findById(taskId);
+      List<User> assignedUsers = task.getUserList();
+      for (User user : assignedUsers) if(user.getId().equals(loggedInUserId)) return true;
+      return false;
     }
 }

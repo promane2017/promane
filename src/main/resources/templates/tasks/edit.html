@@ -12,8 +12,11 @@
 <div layout:fragment="contents">
 <div class="container">
     <h1>タスク編集</h1>
-    <div class="alert alert-success">
+    <div th:if="${param.notAssigned}" class="alert alert-danger">
         タスクに参加しているメンバーのみ編集できます。
+    </div>
+    <div th:if="${param.updated}" class="alert alert-success">
+        タスクを編集しました。
     </div>
     <div class="col-sm-12">
         <form th:action="@{|/projects/${projectId}/tasks/${taskId}/update|}" th:object="${TaskEditForm}" class ="form-horizonal" method="post">
