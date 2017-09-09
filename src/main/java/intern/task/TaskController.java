@@ -39,7 +39,7 @@ public class TaskController {
     @Autowired
     ProjectService projectService;
 
-    @GetMapping("tasks/index")
+    @GetMapping("tasks")
     String list(Model model, @PathVariable("projectId") Integer projectId) {
         List<Task> tasks = taskService.findTask(projectId);
         model.addAttribute("tasks", tasks);
@@ -74,11 +74,11 @@ public class TaskController {
                 .map(member->{return member.getUser();})
                 .forEach(user->{
                     noticeService.create(new Notice(user.getId(),
-                            "<a href=\"/projects/"+projectId+"/tasks/index\">"
+                            "<a href=\"/projects/"+projectId+"/tasks\">"
                     +task.getProject().getName()+"にタスクが追加されました</a>"));
                 });
         //作成に成功したらsuccessパラメータを付加してリダイレクト
-        return "redirect:index?success";
+        return "redirect:?success";
     }
 
     @RequestMapping("tasks/{taskId}/assignees")
@@ -148,7 +148,7 @@ public class TaskController {
     @PostMapping("tasks/delete")
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
         taskService.deleteTask(id);
-        return "redirect:index";
+        return "redirect:";
     }
 
     @PostMapping(path = "tasks/{taskId}/update")
@@ -193,7 +193,7 @@ public class TaskController {
                 }
             }
         }
-        return "redirect:/projects/{projectId}/tasks/index?success_request";
+        return "redirect:/projects/{projectId}/tasks?success_request";
     }
     @PostMapping(path = "tasks/{taskId}/assignees/request_delete")
     String deleteRequest(@RequestParam String userId,

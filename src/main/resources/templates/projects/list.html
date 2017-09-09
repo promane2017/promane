@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" 
-      xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
-      layout:decorator="layout/layout" 
-      lang="ja"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layout"
+      lang="ja">
 
 <head>
     <meta charset="UTF-8"/>
@@ -26,7 +26,7 @@
                 <tbody>
                     <tr th:each="project, stat : ${projects}">
                         <td>
-                            <a th:href="@{/projects/{projectId}/tasks/index(projectId=${project.id})}" th:text="${project.name}">
+                            <a th:href="@{/projects/{projectId}/tasks(projectId=${project.id})}" th:text="${project.name}">
                   dammy name
                 </a>
                         </td>
