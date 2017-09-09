@@ -53,6 +53,7 @@ public class TaskService {
 
     public void update(TaskEditForm taskEditForm, Integer taskId) {
         Task task = taskRepository.findOne(taskId);
+        task.setDescription(taskEditForm.getDescription());
         task.setProgress(taskEditForm.getProgress());
         taskRepository.save(task);
 

@@ -18,27 +18,34 @@
     <div th:if="${param.updated}" class="alert alert-success">
         タスクを編集しました。
     </div>
+    <h2 th:text="${task.getName()}">name</h2>
     <div class="col-sm-12">
         <form th:action="@{|/projects/${projectId}/tasks/${taskId}/update|}" th:object="${TaskEditForm}" class ="form-horizonal" method="post">
-            <fieldset>
+          <fieldset>
+              <div class="form-group">
+                  <label for="comment" class="col-sm-2 control-label">概要</label>
+                  <div class="col-sm-10">
+                      <input id="description" type="text" name="description" class="form-control input-box" th:value="${task.getDescription()}" maxlength="1000"/>
+                  </div>
+              </div>
+
                 <div class="form-group">
                     <label for="progress" class="col-sm-2 control-label input-box">進捗</label>
                     <div class="col-sm-10">
                         <div id="slider" style="width:300px;"></div>
-                        <input id="progress" type="number" name="progress" min="0" max="100" step="1" th:value="${progress}"
+                        <input id="progress" type="number" name="progress" min="0" max="100" step="1" th:value="${task.getProgress()}"
                                style="width: 100px; height: 22px;; font-size: 16px;" class=" input-box"/>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="comment" class="col-sm-2 control-label">コメント</label>
+                    <label for="comment" class="col-sm-2 control-label">コメント(1000文字以内)</label>
                     <div class="col-sm-10">
-                        <input id="comment" type="text" name="comment" class="form-control input-box" placeholder="コメントを入れてね"/>
+                        <textarea id="comment" name="comment" rows="4" cols="40" placeholder="何かあればコメント" maxlength="1000"></textarea>
                     </div>
                 </div>
 
                 <div class="form-group">
-
                     <div class="col-sm-offset-2 col-sm-10">
                         <input type="hidden" name="id"/>
                         <input type="submit" class="btn btn-primary" value="更新"/>
@@ -55,7 +62,7 @@
             </tr>
             <tr th:each="comment : ${comments}">
                 <td th:text="${#dates.format(comment.createdAt, 'yyyy/MM/dd HH:mm:ss')}">comment.createdAt</td>
-                <td th:text="${comment.user.id}">comment.taskId</td>
+                <td th:text="${comment.user.name}">comment.taskId</td>
                 <td th:text="${comment.content}" style="word-wrap:break-word;">comment.content</td>
             </tr>
         </table>

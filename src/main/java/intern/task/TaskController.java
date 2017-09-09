@@ -131,12 +131,9 @@ public class TaskController {
     String taskEdit(@PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId, Model model) {
         Task task = taskService.findById(taskId);
-        Integer progress = task.getProgress();
-        model.addAttribute("progress", progress);
+        model.addAttribute("task", task);
 
         List<Comment> comments = task.getComments();
-        String loggedInUserId = userService.getLoggedInUserId();
-        model.addAttribute("loggedInUserId", loggedInUserId);
         model.addAttribute("comments", comments);
 
         Project project = projectService.findProject(projectId);
@@ -152,7 +149,7 @@ public class TaskController {
 
     @PostMapping(path = "tasks/{taskId}/update")
     String update(@Validated TaskEditForm form, BindingResult result,
-                  @PathVariable("projectId") Integer projectId,//TODO:
+                  @PathVariable("projectId") Integer projectId,
                   @PathVariable("taskId") Integer taskId, Model model) {
         if (result.hasErrors()) {
             return null;
