@@ -187,7 +187,7 @@ public class TaskController {
             for (Member member : MemberList) {
                 if (userService.checkRoot(member.getUser().getId(), projectId)) {
                     notice.setUserId(member.getUser().getId());
-                    notice.setMessage("タスク申請が来ています");
+                    notice.setMessage("<a href=\"/projects/"+projectId+"/tasks/"+taskId+"/edit\">タスク申請が来ています</a>");
                     notice.setCreatedAt(new Date());
                     notice.setUnRead(true);
                     noticeService.create(notice);
