@@ -20,15 +20,14 @@ public class ScheduledTask {
     @Autowired
     TaskRepository taskRepository;
 
-    // @Scheduled(cron = "0/5 * * * * *") // デバッグ用 5 sに一回通知をはく
+    //@Scheduled(cron = "0/5 * * * * *") // デバッグ用 5 sに一回通知をはく
     @Scheduled(cron = "0 0 0 * * *") // 本番用 日付変更時に通知をはく
     public void noticeDeadLine() {
         Date today = DateUtils.createToday().getTime();
         List<Task> tasks = taskRepository.findAll();
         for (Task task : tasks) {
             long date = (task.getDeadline().getTime() - today.getTime()) / (24 * 60 * 60 * 1000);
-            if (date > 3)
-                continue;
+            if (date > 3 || date < 0) continue;
             List<User> users = task.getUserList();
             for (User user : users) {
                 noticeRepository.save(new Notice(user.getId(),
