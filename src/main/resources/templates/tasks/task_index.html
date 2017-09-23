@@ -7,6 +7,17 @@
 <head>
     <meta charset="UTF-8"/>
     <title>タスク一覧</title>
+    <script type="text/javascript"> 
+<!-- 
+function check(){
+	if(window.confirm('削除しますか？')){
+		return true;
+	} else {
+		return false;
+	}
+}
+ -->
+	</script>
 </head>
 <body>
 <div layout:fragment="contents">
@@ -58,7 +69,7 @@
             </form>
         </td>
         <td>
-            <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post"  class="text-center">
+            <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post"  class="text-center" onSubmit="return check()">
                 <input type="hidden" name="id" th:value="${task.id}" />
                 <button type="submit" class="btn btn-danger" ><div class="text-center">削除</div></button>
             </form>

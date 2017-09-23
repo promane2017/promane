@@ -7,7 +7,20 @@
 <head>
     <meta charset="utf-8"/>
     <title>メンバー追加</title>
+    
+    <script type="text/javascript"> 
+<!-- 
+function check(){
+	if(window.confirm('削除しますか？')){
+		return true;
+	} else {
+		return false;
+	}
+}
+ -->
+	</script>
 </head>
+
 <body>
 <div layout:fragment="contents">
     <div class="container">
@@ -26,7 +39,6 @@
                 <div th:if="${param.success}" class="alert alert-success">
                     メンバーを追加しました。
                 </div>
-
 
                 <div class="form-group" th:classappend="${#fields.hasErrors('userId')}? 'has-error has-feedback'">
                 <label for="userId" class="col-sm-2 control-label">ID</label>
@@ -61,7 +73,7 @@
                 <div th:if="${loginMember.root}" class="del">
                 <td>
                     <div th:unless="${member.user.id}==${loginMember.user.id}">
-                    <form th:action="@{/projects/{projectId}/members/delete(projectId=${projectId})}" method="post">
+                    <form th:action="@{/projects/{projectId}/members/delete(projectId=${projectId})}" method="post" onSubmit="return check()">
                         <input class="btn btn-danger" type="submit" value="削除"/>
                         <input type="hidden" name="memberId" th:value="${member.id}"/>
                     </form>
@@ -70,8 +82,8 @@
                 </div>
             </tr>
         </table>
-            <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">プロジェクト詳細画面に戻る</a>
     </div>
+    <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">プロジェクト詳細画面に戻る</a>
 </div>
 </div>
 </body>

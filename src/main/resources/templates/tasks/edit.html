@@ -67,11 +67,12 @@
             </tr>
         </table>
     </div>
-</div>
     <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
     <div th:switch="${pm}">
-  	      <p th:case="true"><a class="link-setting" th:href="@{/projects/{projectId}/tasks/{taskId}/assignees(projectId=${projectId},taskId=${taskId})}">タスクを課すユーザを設定する</a></p>
+          <p th:case="true"><a class="link-setting" th:href="@{/projects/{projectId}/tasks/{taskId}/assignees(projectId=${projectId},taskId=${taskId})}">タスクを課すユーザを設定する</a></p>
     </div>
+</div>
+
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" ht:src="@{/erbjars/jquery/1.11.1/jquery.min.js}"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>

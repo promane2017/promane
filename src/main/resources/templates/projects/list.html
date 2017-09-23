@@ -8,6 +8,18 @@
 <head>
     <meta charset="UTF-8"/>
     <title>プロジェクト一覧</title>
+    
+    <script type="text/javascript"> 
+<!-- 
+function check(){
+	if(window.confirm('削除しますか？')){
+		return true;
+	} else {
+		return false;
+	}
+}
+ -->
+	</script>
 </head>
 
 <body>
@@ -27,18 +39,18 @@
                     <tr th:each="project, stat : ${projects}">
                         <td>
                             <a th:href="@{/projects/{projectId}/tasks(projectId=${project.id})}" th:text="${project.name}">
-                  dammy name
+                  プロジェクト名
                 </a>
                         </td>
                         <td th:text="${project.description}">
-                            dammy_description
+                            詳細
                         </td>
                         <td th:text="${#dates.format(project.createdAt, 'yyyy/MM/dd')}">
-                            dammy_time
+                            作成日時
                         </td>
                         <td>
                             <div th:switch="${pm.get(stat.index)}">
-                                <form th:action="@{/projects/delete}" method="post">
+                                <form th:action="@{/projects/delete}" method="post" onSubmit="return check()">
                                     <input th:case="true" class="btn btn-danger" type="submit" value="削除" />
                                     <input type="hidden" name="id" th:value="${project.id}" />
                                 </form>

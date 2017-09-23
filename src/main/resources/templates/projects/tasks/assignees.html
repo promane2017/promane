@@ -1,13 +1,32 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+       xmlns:th="http://www.thymeleaf.org"
+       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+       layout:decorator="layout/layout"
+       lang="ja">
 <head>
     <meta charset="utf-8"/>
     <title>メンバー追加</title>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}"/>
-    <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}"/>
+    
+    <script type="text/javascript"> 
+<!-- 
+function checkDelete(){
+	if(window.confirm('削除しますか？')) return true;
+	else return false;
+}
+function checkAdd(){
+	if(window.confirm('追加しますか？')) return true;
+	else return false;
+}
+function checkReject(){
+	if(window.confirm('却下しますか？')) return true;
+	else return false;
+}
+ -->
+	</script>
 </head>
 <body>
+<div layout:fragment="contents">
 <div class="container">
     <h1>メンバー追加</h1>
     <div class="col-sm-12">
@@ -22,7 +41,7 @@
                 <td th:text="${users.id}">100</td>
                 <td th:text="${users.name}">山田太郎</td>
                 <td>
-                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/delete(projectId=${projectId},taskId=${taskId})}" method="post">
+                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/delete(projectId=${projectId},taskId=${taskId})}" method="post"  onSubmit="return checkDelete()">
                         <input class="btn btn-danger" type="submit" value="削除"/>
                         <input type="hidden" name="userId" th:value="${users.id}"/>
                     </form>
@@ -41,7 +60,7 @@
                 <td th:text="${users.id}">100</td>
                 <td th:text="${users.name}">山田太郎</td>
                 <td>
-                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/assign(projectId=${projectId},taskId=${taskId})}" method="post">
+                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/assign(projectId=${projectId},taskId=${taskId})}" method="post"  onSubmit="return checkAdd()">
                         <input class="btn btn-primary" type="submit" value="追加"/>
                         <input type="hidden" name="userId" th:value="${users.id}"/>
                     </form>
@@ -65,13 +84,13 @@
                 <div class="text-center">100</div>
             </td>
             <td>
-            	     	<form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/assign(projectId=${projectId},taskId=${taskId})}" method="post">
+            	     	<form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/assign(projectId=${projectId},taskId=${taskId})}" method="post"  onSubmit="return checkAdd()">
                         <input class="btn btn-primary" type="submit" value="追加"/>
                         <input type="hidden" name="userId" th:value="${request.user.id}"/>
                     </form>
             </td>
             <td>
-                <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/request_delete(projectId=${projectId},taskId=${taskId})}" method="post">
+                <form th:action="@{/projects/{projectId}/tasks/{taskId}/assignees/request_delete(projectId=${projectId},taskId=${taskId})}" method="post"  onSubmit="return checkReject()">
                     <input class="btn btn-danger" type="submit" value="却下"/>
                     <input type="hidden" name="userId" th:value="${request.getUser().getId()}"/>
                 </form>
@@ -84,5 +103,6 @@
 <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
+</div>
 </body>
 </html>

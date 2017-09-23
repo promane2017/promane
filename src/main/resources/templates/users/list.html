@@ -6,6 +6,17 @@
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"/>
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}"/>
     <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}"/>
+    <script type="text/javascript"> 
+<!-- 
+function check(){
+	if(window.confirm('削除しますか？')){
+		return true;
+	} else {
+		return false;
+	}
+}
+ -->
+	</script>
 </head>
 <body>
 <div class="container">
@@ -65,7 +76,7 @@
                     <a class="btn btn-default" type="submit" th:href="@{/users/edit(form,id=${user.id})}">編集</a>
                 </td>
                 <td>
-                    <form th:action="@{/users/delete}" method="post">
+                    <form th:action="@{/users/delete}" method="post"  onSubmit="return check()">
                         <input class="btn btn-danger" type="submit" value="削除"/>
                         <input type="hidden" name="id" th:value="${user.id}"/>
                     </form>
