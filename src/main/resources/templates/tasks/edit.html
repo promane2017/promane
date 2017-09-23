@@ -12,8 +12,8 @@
 <div layout:fragment="contents">
 <div class="container">
     <h1>タスク編集</h1>
-    <div th:if="${param.notAssigned}" class="alert alert-danger">
-        タスクに参加しているメンバーのみ編集できます。
+    <div th:if="${assigned}" class="alert alert-danger">
+        タスクに参加しているメンバーのみ編集・コメントできます。
     </div>
     <div th:if="${param.updated}" class="alert alert-success">
         タスクを編集しました。

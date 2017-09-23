@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -39,9 +40,24 @@ public class TaskController {
 
     @GetMapping("tasks")
     String list(Model model, @PathVariable("projectId") Integer projectId) {
+    		String loginedId = userService.getLoggedInUserId();
+    		
+    		// プロジェクトのタスク一覧取得
         List<Task> tasks = taskService.findTask(projectId);
         model.addAttribute("tasks", tasks);
-
+        
+        // タスクの参加・申請済み判定 [0なら申請可能/1なら申請済み/2なら参加済み]
+        List<Integer> assignedList = new ArrayList<Integer>();
+        for(Task task: tasks) {
+        		if(!taskService.isAlreadyAssigenedUser(loginedId, task.getId())) {
+        			if(!requestService.isAlreadyRequest(loginedId, task.getId())) {
+        				assignedList.add(0);
+        			} else assignedList.add(1);
+        		} else assignedList.add(2);
+        }
+        model.addAttribute("assignedList", assignedList);
+        
+        // PM判定
         Project project = projectService.findProject(projectId);
         model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
         return "tasks/task_index";
@@ -138,6 +154,9 @@ public class TaskController {
 
         Project project = projectService.findProject(projectId);
         model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+        
+        if (!taskService.isAlreadyAssigenedUser(userService.getLoggedInUserId(), taskId)) model.addAttribute("assigned", true);
+        else model.addAttribute("assigned", false);
         return "tasks/edit";
     }
 
@@ -155,18 +174,19 @@ public class TaskController {
             return null;
         }
         String loggedInUserId = userService.getLoggedInUserId();
-        String param;
+        String param="";
         if (taskService.isAlreadyAssigenedUser(loggedInUserId, taskId)) {
             taskService.update(form, taskId);
-            param = "updated";
+            param = "?updated";
         }else{
-            param = "notAssigned";
+        		model.addAttribute("assigned", false);
         }
         Integer progress = taskService.findProgress(taskId);
         model.addAttribute("progress", progress);
         List<Comment> comments = taskService.findComment(taskId);
         model.addAttribute("comments", comments);
-        return "redirect:edit?"+param;
+        
+        return "redirect:edit"+param;
     }
 
     @PostMapping(path = "tasks/{taskId}/requests")

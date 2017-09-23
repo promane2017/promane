@@ -9,8 +9,15 @@
     <title>タスク一覧</title>
     <script type="text/javascript"> 
 <!-- 
-function check(){
+function checkDelete(){
 	if(window.confirm('削除しますか？')){
+		return true;
+	} else {
+		return false;
+	}
+}
+function checkRequest(){
+	if(window.confirm('申請しますか？')){
 		return true;
 	} else {
 		return false;
@@ -38,7 +45,7 @@ function check(){
         <th class="text-center" width="300">進捗</th>
         <th class="text-center" colspan="3">管理</th>
     </tr>
-    <tr th:each="task : ${tasks}">
+    <tr th:each="task, stat : ${tasks}">
         <td th:text="${task.name}" class="text-center">名前</td>
         <div th:switch="${task.importance}">
   		  <td class="danger text-center" th:case="high" th:text="高"></td>
@@ -53,13 +60,27 @@ function check(){
                 <div class="progress-bar" th:style="|width: ${task.progress}%|"></div>
             </div>
         </td>
-        <td>
+        <td >
             <form th:action="@{/projects/{projectId}/tasks/{taskId}/requests(projectId=${projectId},taskId=${task.id})}"
-                  method="post">
+                  method="post" onSubmit="return checkRequest()">
                 <input type="hidden" name="id" th:value="${task.id}"/>
-                <button type="submit" class="btn btn-success">
-                    <div class="text-center">タスク参加申請</div>
-                </button>
+                <div th:switch="${assignedList.get(stat.index)}">
+                		<div th:case="0">
+                			<button type="submit" class="btn btn-success">
+   						<div class="text-center">　タスク参加申請　</div>
+   						</button>
+   					</div>
+   					<div th:case="1">
+                			<button type="submit" class="btn btn-success" disabled="disabled">
+   						<div class="text-center">タスク参加申請済み</div>
+   						</button>
+   					</div>
+   					<div th:case="2">
+                			<button type="submit" class="btn btn-success" disabled="disabled">
+   						<div class="text-center">　タスク参加済み　</div>
+   						</button>
+   					</div>
+                </div> 
             </form>
         </td>
         <td>
@@ -69,7 +90,7 @@ function check(){
             </form>
         </td>
         <td>
-            <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post"  class="text-center" onSubmit="return check()">
+            <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post"  class="text-center" onSubmit="return checkDelete()">
                 <input type="hidden" name="id" th:value="${task.id}" />
                 <button type="submit" class="btn btn-danger" ><div class="text-center">削除</div></button>
             </form>

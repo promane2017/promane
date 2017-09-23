@@ -11,7 +11,7 @@
     
     <script type="text/javascript"> 
 <!-- 
-function check(){
+function checkDelete(){
 	if(window.confirm('削除しますか？')){
 		return true;
 	} else {
@@ -50,7 +50,7 @@ function check(){
                         </td>
                         <td>
                             <div th:switch="${pm.get(stat.index)}">
-                                <form th:action="@{/projects/delete}" method="post" onSubmit="return check()">
+                                <form th:action="@{/projects/delete}" method="post" onSubmit="return checkDelete()">
                                     <input th:case="true" class="btn btn-danger" type="submit" value="削除" />
                                     <input type="hidden" name="id" th:value="${project.id}" />
                                 </form>
