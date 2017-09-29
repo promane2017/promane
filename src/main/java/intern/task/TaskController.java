@@ -42,6 +42,10 @@ public class TaskController {
     String list(Model model, @PathVariable("projectId") Integer projectId) {
     		String loginedId = userService.getLoggedInUserId();
     		
+    		//プロジェクト参加済み判定
+    		Member myProjectMemberData = memberService.getMemberByLoginUser(loginedId, projectId);
+    		if(myProjectMemberData == null) return "errors/project_not_assign";
+    		
     		// プロジェクトのタスク一覧取得
         List<Task> tasks = taskService.findTask(projectId);
         model.addAttribute("tasks", tasks);
@@ -104,7 +108,9 @@ public class TaskController {
         // root check
         String loginedId = userService.getLoggedInUserId();
         if (!userService.checkRoot(loginedId, projectId)) {
-            return "projects/tasks/not_root";
+    			//プロジェクト参加済み判定
+    			if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+            return "errors/not_root";
         }
 
         List<User> assignedUsers = taskService.findById(taskId).getUserList();
@@ -146,6 +152,9 @@ public class TaskController {
     @GetMapping(path = "tasks/{taskId}/edit")
     String taskEdit(@PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId, Model model) {
+    		//プロジェクト参加済み判定
+    		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+    	
         Task task = taskService.findById(taskId);
         model.addAttribute("task", task);
 
@@ -192,6 +201,9 @@ public class TaskController {
     @PostMapping(path = "tasks/{taskId}/requests")
     String taskRequest(@PathVariable("projectId") Integer projectId,
                        @PathVariable("taskId") Integer taskId) {
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+		
         User user = userService.findUser(userService.getLoggedInUserId());
         Task task = taskService.findById(taskId);
         String taskName = task.getName();
