@@ -63,7 +63,7 @@ public class TaskController {
         
         // PM判定
         Project project = projectService.findProject(projectId);
-        model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+        model.addAttribute("pm", project.isManager(loginedId));
         return "tasks/task_index";
     }
 
@@ -146,6 +146,7 @@ public class TaskController {
 
     @GetMapping(path = "task")
     String taskCreate(@PathVariable("projectId") Integer projectId) {
+    		if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         return "tasks/task_create";
     }
 
