@@ -29,10 +29,16 @@ public class UserController {
 
 	@GetMapping
 	String list(Model model) {
+		//admin専用ユーザリストの作成
 		List<User> users = new ArrayList<User>();
 		User user = userService.findUser(userService.getLoggedInUserId());
-		if(user != null && user.getRole().equals("ADMIN_USER"))  users = userService.findUser();
+		boolean admin = false;
+		if(user != null && user.getRole().equals("ADMIN_USER")) {
+			users = userService.findUser();
+			admin = true;
+		}
 		model.addAttribute("users", users);
+		model.addAttribute("admin", admin);
 		return "users/list";
 	}
 
@@ -49,12 +55,16 @@ public class UserController {
 		User check = userService.create(user);
 		if(check == null) return "redirect:/users?error";
 
-    noticeService.create(new Notice(check.getId(), "ぷろまね。ちゃんへようこそ！"));
+		noticeService.create(new Notice(check.getId(), "ぷろまね。ちゃんへようこそ！"));
 		return "redirect:/loginForm?success";
 	}
 
 	@GetMapping(path = "edit", params = "form")
 	String editForm(@RequestParam String id, User form) {
+		//adminチェック
+		User loginUser = userService.findUser(userService.getLoggedInUserId());
+		if(loginUser != null && !loginUser.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		
 		User user = userService.findUser(id);
 		BeanUtils.copyProperties(user, form);
 		return "users/edit";
@@ -65,9 +75,14 @@ public class UserController {
 		if (result.hasErrors()) {
 			return editForm(id, form);
 		}
-		User user = userService.findUser(id);
-		user.setName(form.getName());
-		userService.update(user);
+		
+		//adminチェック
+		User loginUser = userService.findUser(userService.getLoggedInUserId());
+		if(loginUser != null && !loginUser.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		
+		User editUser = userService.findUser(id);
+		editUser.setName(form.getName());
+		userService.update(editUser);
 		return "redirect:/users";
 	}
 

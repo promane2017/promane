@@ -91,8 +91,8 @@
                         <button type="submit" class="btn btn-warning"><div class="text-center">編集</div></button>
                     </form>
                 </td>
-                <div th:switch="${pm}">
-                    <td th:case="true">
+                <div th:if="${pm}">
+                    <td>
                         <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post" class="text-center" onSubmit="return checkDelete()">
                             <input type="hidden" name="id" th:value="${task.id}" />
                             <button type="submit" class="btn btn-danger text-center">削除</button>

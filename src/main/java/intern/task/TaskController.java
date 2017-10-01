@@ -146,6 +146,7 @@ public class TaskController {
 
     @GetMapping(path = "task")
     String taskCreate(@PathVariable("projectId") Integer projectId) {
+    		//PM判定
     		if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         return "tasks/task_create";
     }
