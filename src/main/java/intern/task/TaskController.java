@@ -73,7 +73,7 @@ public class TaskController {
         if (result.hasErrors()) return null;
         
         // PM判定
-        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         
         Task task = new Task();
         task.setName(form.getName());
@@ -129,7 +129,7 @@ public class TaskController {
     String deleteTaskUser(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId) {
     		// PM判定
-        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         
         taskService.deleteUser(userId, taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
@@ -139,7 +139,7 @@ public class TaskController {
     String userAssignToTask(@RequestParam String userId, @PathVariable("projectId") Integer projectId, 
     		@PathVariable("taskId") Integer taskId) {
     		// PM判定
-        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         
         taskService.assignUser(userId, taskId);
         requestService.deleteRequest(userId,taskId);
@@ -176,7 +176,7 @@ public class TaskController {
     @PostMapping("tasks/delete")
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
     		// PM判定
-        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         
         taskService.deleteTask(id);
         return "redirect:";
