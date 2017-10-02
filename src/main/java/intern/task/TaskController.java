@@ -69,13 +69,12 @@ public class TaskController {
 
     @PostMapping(path = "tasks/create")
     String create(
-            @Validated TaskForm form,
-            BindingResult result,
-            Model model,
-            @PathVariable("projectId") Integer projectId) {
-        if (result.hasErrors()) {
-            return null;
-        }
+            @Validated TaskForm form, BindingResult result, Model model, @PathVariable("projectId") Integer projectId) {
+        if (result.hasErrors()) return null;
+        
+        // PM判定
+        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        
         Task task = new Task();
         task.setName(form.getName());
         task.setDescription(form.getDescription());
@@ -101,9 +100,7 @@ public class TaskController {
 
     @RequestMapping("tasks/{taskId}/assignees")
     @GetMapping
-    String getMemberList(Model model,
-                         @PathVariable("projectId") Integer projectId,
-                         @PathVariable("taskId") Integer taskId) {
+    String getMemberList(Model model, @PathVariable("projectId") Integer projectId, @PathVariable("taskId") Integer taskId) {
 
         // root check
         String loginedId = userService.getLoggedInUserId();
@@ -131,14 +128,19 @@ public class TaskController {
     @PostMapping(path = "tasks/{taskId}/assignees/delete")
     String deleteTaskUser(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId) {
+    		// PM判定
+        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        
         taskService.deleteUser(userId, taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
     }
 
     @PostMapping(path = "tasks/{taskId}/assignees/assign")
-    String userAssignToTask(@RequestParam String userId,
-                            @PathVariable("projectId") Integer projectId,
-                            @PathVariable("taskId") Integer taskId) {
+    String userAssignToTask(@RequestParam String userId, @PathVariable("projectId") Integer projectId, 
+    		@PathVariable("taskId") Integer taskId) {
+    		// PM判定
+        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        
         taskService.assignUser(userId, taskId);
         requestService.deleteRequest(userId,taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
@@ -173,17 +175,21 @@ public class TaskController {
 
     @PostMapping("tasks/delete")
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
+    		// PM判定
+        if(projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        
         taskService.deleteTask(id);
         return "redirect:";
     }
 
     @PostMapping(path = "tasks/{taskId}/update")
-    String update(@Validated TaskEditForm form, BindingResult result,
-                  @PathVariable("projectId") Integer projectId,
+    String update(@Validated TaskEditForm form, BindingResult result, @PathVariable("projectId") Integer projectId,
                   @PathVariable("taskId") Integer taskId, Model model) {
-        if (result.hasErrors()) {
-            return null;
-        }
+        if (result.hasErrors()) return null;
+        
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+        
         String loggedInUserId = userService.getLoggedInUserId();
         String param="";
         if (taskService.isAlreadyAssigenedUser(loggedInUserId, taskId)) {
@@ -230,9 +236,8 @@ public class TaskController {
     }
 
     @PostMapping(path = "tasks/{taskId}/assignees/request_delete")
-    String deleteRequest(@RequestParam String userId,
-                          @PathVariable("projectId") Integer projectId,
-                          @PathVariable("taskId") Integer taskId) {
+    String deleteRequest(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
+                         @PathVariable("taskId") Integer taskId) {
         requestService.deleteRequest(userId,taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
     }
