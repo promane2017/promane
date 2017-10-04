@@ -59,7 +59,11 @@ function checkDelete(){
                     </tr>
                 </tbody>
             </table>
-            <a href="/projects/entry">プロジェクトを作成する</a>
+            <a class="link-setting" href="/projects/entry">プロジェクトを作成する</a>
+            <div th:if="${pm}">
+          		 <hr/>	
+        		   	 <a href="users/userList">[管理者専用]ユーザ管理ページ</a>
+           	</div>
         </div>
     </div>
 </body>

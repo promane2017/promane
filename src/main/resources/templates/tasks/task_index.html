@@ -67,18 +67,18 @@
                     <form th:action="@{/projects/{projectId}/tasks/{taskId}/requests(projectId=${projectId},taskId=${task.id})}" method="post" onSubmit="return checkRequest()">
                         <input type="hidden" name="id" th:value="${task.id}" />
                         <div th:switch="${assignedList.get(stat.index)}">
-                            <div th:case="0">
+                            <div th:case="0" class="text-center">
                                 <button type="submit" class="btn btn-success">
    							       <div class="text-center">　タスク参加申請　</div>
    						       </button>
                             </div>
-                            <div th:case="1">
-                                 <button type="submit" class="btn btn-success" disabled="disabled">
+                            <div th:case="1" class="text-center">
+                                 <button type="submit" class="btn btn-outline-warning" disabled="disabled">
    						            <div class="text-center">タスク参加申請済み</div>
                                  </button>
                             </div>
-                            <div th:case="2">
-                                <button type="submit" class="btn btn-success" disabled="disabled">
+                            <div th:case="2" class="text-center">
+                                <button type="submit" class="btn btn-info" disabled="disabled">
    						             <div class="text-center">　タスク参加済み　</div>
                                 </button>
                             </div>

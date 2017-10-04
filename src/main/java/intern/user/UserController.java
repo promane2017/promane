@@ -29,19 +29,19 @@ public class UserController {
 
 	@GetMapping
 	String list(Model model) {
-		//admin専用ユーザリストの作成
-		List<User> users = new ArrayList<User>();
-		User user = userService.findUser(userService.getLoggedInUserId());
-		boolean admin = false;
-		if(user != null && user.getRole().equals("ADMIN_USER")) {
-			users = userService.findUser();
-			admin = true;
-		}
-		model.addAttribute("users", users);
-		model.addAttribute("admin", admin);
-		return "users/list";
+		return "users/user_create";
 	}
 
+	@RequestMapping(path = "userList")
+	String userList(Model model) {
+		//admin判定
+		User user = userService.findUser(userService.getLoggedInUserId());
+		if(user != null && !user.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		List<User> users = userService.findUser();
+		model.addAttribute("users", users);
+		return "users/list";
+	}
+	
 	@PostMapping(path = "create")
 	String create(@Validated UserForm form, BindingResult result, Model model) {
 		if(result.hasErrors()) {
@@ -83,18 +83,18 @@ public class UserController {
 		User editUser = userService.findUser(id);
 		editUser.setName(form.getName());
 		userService.update(editUser);
-		return "redirect:/users";
+		return "redirect:/users/userList";
 	}
 
 	@RequestMapping(path = "edit", params = "goToTop")
 	String goToTop(){
-		return "redirect:/users";
+		return "redirect:/users/userList";
 	}
 
 	@PostMapping(path = "delete")
 	String delete(@RequestParam String id) {
 		User user = userService.findUser(userService.getLoggedInUserId());
 		if(user != null && user.getRole().equals("ADMIN_USER")) userService.delete(id);
-		return "redirect:/users";
+		return "redirect:/users/userList";
 	}
 }
