@@ -17,9 +17,6 @@ server.port = 8090
 
 ### /users
 ユーザを作成することができます。  
-adminユーザはこの画面からユーザ情報の閲覧・編集を行うことができます。  
-2017/9/30現在、adminユーザを追加する方法はありません。  
-h2-consoleから手動で変更してください。  
 
 ### /loginForm
 ログイン画面です。
@@ -28,4 +25,13 @@ h2-consoleから手動で変更してください。
 RDBMSのJDBCです。  
 ```
 JDBC URL: jdbc:h2:file:./target/db/intern
+```
+
+### /users/userList
+adminユーザはこの画面からユーザ情報の閲覧・編集を行うことができます。  
+2017/10/1 現在、adminユーザを追加する方法はありません。  
+h2-consoleから手動で変更してください。
+```
+//user idが1の場合
+UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 1;
 ```

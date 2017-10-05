@@ -10,7 +10,7 @@
 <body>
 <div class="container">
     <h1>アカウント作成</h1>
-    <div class="col-sm-12">
+    
         <form th:action="@{/users/create}" th:object="${userForm}" class ="form-horizonal" method="post">
             <fieldset>
                 <legend>必要情報を入力してください</legend>
@@ -18,7 +18,7 @@
                 <div th:if="${param.error}" class="alert alert-danger">
                     このIDは使用できません
                 </div>
-
+			<div class="col-sm-12">
                 <div class="form-group" th:classappend="${#fields.hasErrors('id')}? 'has-error has-feedback'">
                     <label for="id" class="col-sm-2 control-label">ID [必須]</label>
                     <div class="col-sm-10">
@@ -42,18 +42,17 @@
                         <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="help-block error-messages">error!</span>
                     </div>
                 </div>
-
+ 			</div>
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-10" style="text-align:center;">
-                        <button type="submit" class="btn btn-primary btn-lg">作成</button>
-                    </div>
+                        <button type="submit" class="btn btn-lg btn-primary btn-block">作成</button>
                 </div>
 
             </fieldset>
         </form>
     </div>
+    <div class="col-sm-12">
     <a href="../loginForm">ログイン画面へ戻る</a>
-    </div>
+   </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 </body>
