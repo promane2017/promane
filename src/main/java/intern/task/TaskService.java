@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @Service
@@ -51,10 +53,16 @@ public class TaskService {
         update(task);
     }
 
-    public void update(TaskEditForm taskEditForm, Integer taskId) {
+    public void update(TaskEditForm taskEditForm, Integer taskId) throws ParseException {
         Task task = taskRepository.findOne(taskId);
         task.setDescription(taskEditForm.getDescription());
         task.setProgress(taskEditForm.getProgress());
+        //deadlineが設定されている場合
+        if(!taskEditForm.getDeadline().equals("")) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date deadLine = sdf.parse(taskEditForm.getDeadline());
+            task.setDeadline(deadLine);    	
+        }
         taskRepository.save(task);
 
         if (!taskEditForm.getComment().isEmpty()) {

@@ -57,7 +57,13 @@
                 </div>
                 <td th:text="${task.description}" class="text-center">概要</td>
                 <td th:text="${#dates.format(task.createdAt, 'yyyy/MM/dd')}" class="text-center">作成日</td>
-                <td th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
+                <div th:if="${task.deadline==null}">
+                <td class="text-center">未設定</td>
+                </div>
+                <div th:unless="${task.deadline==null}">
+             	   <td th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
+                </div>
+                
                 <td>
                     <div class="progress progress-striped active center">
                         <div class="progress-bar" th:style="|width: ${task.progress}%|"></div>

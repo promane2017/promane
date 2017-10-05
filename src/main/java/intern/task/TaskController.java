@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 /**
@@ -41,15 +43,15 @@ public class TaskController {
     @GetMapping("tasks")
     String list(Model model, @PathVariable("projectId") Integer projectId) {
     		String loginedId = userService.getLoggedInUserId();
-    		
+
     		//プロジェクト参加済み判定
     		Member myProjectMemberData = memberService.getMemberByLoginUser(loginedId, projectId);
     		if(myProjectMemberData == null) return "errors/project_not_assign";
-    		
+
     		// プロジェクトのタスク一覧取得
         List<Task> tasks = taskService.findTask(projectId);
         model.addAttribute("tasks", tasks);
-        
+
         // タスクの参加・申請済み判定 [0なら申請可能/1なら申請済み/2なら参加済み]
         List<Integer> assignedList = new ArrayList<Integer>();
         for(Task task: tasks) {
@@ -60,7 +62,7 @@ public class TaskController {
         		} else assignedList.add(2);
         }
         model.addAttribute("assignedList", assignedList);
-        
+
         // PM判定
         Project project = projectService.findProject(projectId);
         model.addAttribute("pm", project.isManager(loginedId));
@@ -68,18 +70,23 @@ public class TaskController {
     }
 
     @PostMapping(path = "tasks/create")
-    String create(
-            @Validated TaskForm form, BindingResult result, Model model, @PathVariable("projectId") Integer projectId) {
+    String create(@Validated TaskForm form, BindingResult result, Model model, @PathVariable("projectId") Integer projectId) throws ParseException {
         if (result.hasErrors()) return null;
-        
+
         // PM判定
         if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
-        
         Task task = new Task();
         task.setName(form.getName());
         task.setDescription(form.getDescription());
         task.setImportance(form.getImportance());
-        task.setDeadline(form.getDeadline());
+        
+        //deadlineが設定されている場合
+        if(!form.getDeadline().equals("")) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date deadLine = sdf.parse(form.getDeadline());
+            task.setDeadline(deadLine);        	
+        }
+        
         if (taskService.findTask(projectId) != null) {
             task.setProject(projectService.findProject(projectId));
         } else {
@@ -94,6 +101,7 @@ public class TaskController {
                             "<a href=\"/projects/"+projectId+"/tasks\">"
                     +task.getProject().getName()+"にタスクが追加されました</a>"));
                 });
+        
         //作成に成功したらsuccessパラメータを付加してリダイレクト
         return "redirect:?success";
     }
@@ -130,17 +138,17 @@ public class TaskController {
         @PathVariable("taskId") Integer taskId) {
     		// PM判定
         if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
-        
+
         taskService.deleteUser(userId, taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
     }
 
     @PostMapping(path = "tasks/{taskId}/assignees/assign")
-    String userAssignToTask(@RequestParam String userId, @PathVariable("projectId") Integer projectId, 
+    String userAssignToTask(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
     		@PathVariable("taskId") Integer taskId) {
     		// PM判定
         if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
-        
+
         taskService.assignUser(userId, taskId);
         requestService.deleteRequest(userId,taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
@@ -158,16 +166,13 @@ public class TaskController {
         @PathVariable("taskId") Integer taskId, Model model) {
     		//プロジェクト参加済み判定
     		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
-    	
+
         Task task = taskService.findById(taskId);
         model.addAttribute("task", task);
-
-        List<Comment> comments = task.getComments();
-        model.addAttribute("comments", comments);
-
+        
         Project project = projectService.findProject(projectId);
         model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
-        
+
         if (!taskService.isAlreadyAssigenedUser(userService.getLoggedInUserId(), taskId)) model.addAttribute("assigned", true);
         else model.addAttribute("assigned", false);
         return "tasks/edit";
@@ -177,19 +182,19 @@ public class TaskController {
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
     		// PM判定
         if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
-        
+
         taskService.deleteTask(id);
         return "redirect:";
     }
 
     @PostMapping(path = "tasks/{taskId}/update")
     String update(@Validated TaskEditForm form, BindingResult result, @PathVariable("projectId") Integer projectId,
-                  @PathVariable("taskId") Integer taskId, Model model) {
+                  @PathVariable("taskId") Integer taskId, Model model) throws ParseException {
         if (result.hasErrors()) return null;
-        
+
 		//プロジェクト参加済み判定
 		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
-        
+
         String loggedInUserId = userService.getLoggedInUserId();
         String param="";
         if (taskService.isAlreadyAssigenedUser(loggedInUserId, taskId)) {
@@ -202,7 +207,7 @@ public class TaskController {
         model.addAttribute("progress", progress);
         List<Comment> comments = taskService.findComment(taskId);
         model.addAttribute("comments", comments);
-        
+
         return "redirect:edit"+param;
     }
 
@@ -211,7 +216,7 @@ public class TaskController {
                        @PathVariable("taskId") Integer taskId) {
 		//プロジェクト参加済み判定
 		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
-		
+
         User user = userService.findUser(userService.getLoggedInUserId());
         Task task = taskService.findById(taskId);
         String taskName = task.getName();

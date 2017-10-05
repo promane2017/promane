@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     importance          VARCHAR(10)   NOT NULL,
     progress            INTEGER       NOT NULL,
     created_at          TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deadline            DATETIME      NOT NULL,
+    deadline            DATETIME,
     FOREIGN KEY(project_id) REFERENCES projects(id)
 );
 

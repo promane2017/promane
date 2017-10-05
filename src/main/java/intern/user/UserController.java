@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("users")

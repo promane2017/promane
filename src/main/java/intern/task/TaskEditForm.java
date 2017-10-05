@@ -19,4 +19,6 @@ public class TaskEditForm {
 
     @Size(min = 0,max = 1000)
     private String comment;
+    
+    private String deadline;
 }

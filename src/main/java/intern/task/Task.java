@@ -38,7 +38,7 @@ public class Task {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Temporal(TemporalType.TIMESTAMP)
     private Date deadline;
 
@@ -47,10 +47,10 @@ public class Task {
 			@JoinColumn(name = "task_id", referencedColumnName = "id") }, inverseJoinColumns = {
 					@JoinColumn(name = "user_id", referencedColumnName = "id") })
     private List<User> userList;
-    
+
     @OneToMany(mappedBy="task", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
-    
+
     @ManyToOne
     private Project project;
 

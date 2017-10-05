@@ -11,13 +11,13 @@
 <body>
 <div layout:fragment="contents">
 <div class="container">
-    <h1>タスク編集</h1>
     <div th:if="${assigned}" class="alert alert-danger">
         タスクに参加しているメンバーのみ編集・コメントできます。
     </div>
     <div th:if="${param.updated}" class="alert alert-success">
         タスクを編集しました。
     </div>
+    <h1>タスク編集</h1>
     <h2 th:text="${task.getName()}">name</h2>
     <div class="col-sm-12">
         <form th:action="@{|/projects/${projectId}/tasks/${taskId}/update|}" th:object="${TaskEditForm}" class ="form-horizonal" method="post">
@@ -37,6 +37,24 @@
                                style="width: 100px; height: 22px;; font-size: 16px;" class=" input-box">%</input>
                     </div>
                 </div>
+                
+             <div class="form-group">
+                  <label for="comment" class="col-sm-2 control-label">期限</label>
+                  <div class="col-sm-10">
+					<div th:if="${task.deadline==null}">
+						<input id="deadline" type="text" name="deadline" class="form-control input-box" />
+						<script type="text/javascript">
+							$(function() {
+				  	 	    		$("#deadline").datepicker();
+								$('#deadline').datepicker("option", "dateFormat", 'yy/mm/dd' );
+							});
+                        </script>
+					</div>
+					<div th:unless="${task.deadline==null}">
+            		 	   	<input id="deadline" type="text" name="deadline" class="form-control input-box" th:value="${#dates.format(task.getDeadline(), 'yyyy/MM/dd')}" />
+					</div>
+                  </div>
+              </div>
 
                 <div class="form-group">
                     <label for="comment" class="col-sm-2 control-label">コメント(1000文字以内)</label>
@@ -55,7 +73,7 @@
         </form>
         <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
     		<div th:if="${pm}">
-        		  <a class="link-setting" th:href="@{/projects/{projectId}/tasks/{taskId}/assignees(projectId=${projectId},taskId=${taskId})}">タスクを課すユーザを設定する</a>
+        		  <a th:href="@{/projects/{projectId}/tasks/{taskId}/assignees(projectId=${projectId},taskId=${taskId})}">[PM専用]タスクを課すユーザを設定する</a>
   		</div>
         <hr/>
         <h2>コメント</h2>
@@ -65,7 +83,7 @@
                 <th class="col-md-2">名前</th>
                 <th class="col-md-8">コメント</th>
             </tr>
-            <tr th:each="comment : ${comments}">
+            <tr th:each="comment : ${task.getComments()}">
                 <td th:text="${#dates.format(comment.createdAt, 'yyyy/MM/dd HH:mm:ss')}">comment.createdAt</td>
                 <td th:text="${comment.user.name}">comment.taskId</td>
                 <td th:text="${comment.content}" style="word-wrap:break-word;">comment.content</td>
@@ -74,9 +92,6 @@
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js" ht:src="@{/erbjars/jquery/1.11.1/jquery.min.js}"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 	$(function() {
 		var connect_slider_box = function(slider_id, box_id) {
