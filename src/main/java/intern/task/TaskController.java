@@ -130,6 +130,9 @@ public class TaskController {
         //requestメンバー
         List<Request> requests = requestService.findRequest(taskId);
         model.addAttribute("requests", requests);
+        
+        //PMがアサインしてるか否か
+        model.addAttribute("pmAlreadyAssign", taskService.isAlreadyAssigenedUser(loginedId, taskId));
         return "projects/tasks/assignees";
     }
 
@@ -159,6 +162,21 @@ public class TaskController {
     		//PM判定
     		if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         return "tasks/task_create";
+    }
+    
+    @GetMapping("tasks/{taskId}/detail")
+    String detail(@PathVariable("projectId") Integer projectId,
+            @PathVariable("taskId") Integer taskId, Model model) {
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+        Task task = taskService.findById(taskId);
+        model.addAttribute("task", task);
+        
+        //PM判定
+        Project project = projectService.findProject(projectId);
+        model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+    		
+    		return "tasks/task_detail";
     }
 
     @GetMapping(path = "tasks/{taskId}/edit")

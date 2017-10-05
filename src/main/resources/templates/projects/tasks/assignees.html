@@ -100,7 +100,13 @@ function checkReject(){
         </table>
     </div>
 </div>
-<a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
+<div th:if="${pmAlreadyAssign}">
+	<a th:href="@{/projects/{projectId}/tasks/{taskId}/edit(projectId=${projectId}, taskId=${taskId})}">タスク編集に戻る</a>
+</div>
+<div th:unless="${pmAlreadyAssign}">
+	<a th:href="@{/projects/{projectId}/tasks/{taskId}/detail(projectId=${projectId}, taskId=${taskId})}">タスク詳細に戻る</a>
+</div>
+<a th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" th:src="@{/webjars/jquery/1.11.1/jquery.min.js}"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/3.3.7/js/bootstrap.min.js}"></script>
 </div>

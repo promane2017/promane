@@ -92,10 +92,26 @@
                     </form>
                 </td>
                 <td>
-                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/edit(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
-                        <input type="hidden" name="id" th:value="${task.id}" />
-                        <button type="submit" class="btn btn-warning"><div class="text-center">編集</div></button>
-                    </form>
+					<div th:switch="${assignedList.get(stat.index)}">
+                        	<div th:case="0" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/detail(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-default"><div class="text-center">詳細</div></button>
+                			    </form>		
+                       	</div>
+                       	<div th:case="1" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/detail(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-default"><div class="text-center">詳細</div></button>
+                			    </form>		
+                       	</div>
+                       	<div th:case="2" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/edit(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-warning"><div class="text-center">編集</div></button>
+                			    </form>		
+                       	</div>
+					</div>
                 </td>
                 <div th:if="${pm}">
                     <td>
