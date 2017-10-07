@@ -47,23 +47,18 @@
                     <th th:case="true" class="text-center" colspan="3">管理</th>
                     <th th:case="false" class="text-center" colspan="2">管理</th>
                 </div>
-            </tr>
-            <tr th:each="task, stat : ${tasks}">
-                <td th:text="${task.name}" class="text-center">名前</td>
-                <div th:switch="${task.importance}">
+			</tr>
+			<tr th:each="task, stat : ${tasks}">
+				<td th:text="${task.name}" class="text-center">名前</td>
+				<div th:switch="${task.importance}">
                     <td class="danger text-center" th:case="high" th:text="高"></td>
                     <td class="warning text-center" th:case="middle" th:text="中"></td>
                     <td class="success text-center" th:case="low" th:text="低"></td>
-                </div>
-                <td th:text="${task.description}" class="text-center">概要</td>
-                <td th:text="${#dates.format(task.createdAt, 'yyyy/MM/dd')}" class="text-center">作成日</td>
-                <div th:if="${task.deadline==null}">
-                <td class="text-center">未設定</td>
-                </div>
-                <div th:unless="${task.deadline==null}">
-             	   <td th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
-                </div>
-                
+				</div>
+				<td th:text="${task.description}" class="text-center">概要</td>
+				<td th:text="${#dates.format(task.createdAt, 'yyyy/MM/dd')}" class="text-center">作成日</td>
+				<td th:if="${task.deadline==null}" class="text-center">未設定</td>
+				<td th:unless="${task.deadline==null}" th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
                 <td>
                     <div class="progress progress-striped active center">
                         <div class="progress-bar" th:style="|width: ${task.progress}%|"></div>
@@ -112,15 +107,13 @@
                 			    </form>		
                        	</div>
 					</div>
-                </td>
-                <div th:if="${pm}">
-                    <td>
-                        <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post" class="text-center" onSubmit="return checkDelete()">
-                            <input type="hidden" name="id" th:value="${task.id}" />
-                            <button type="submit" class="btn btn-danger text-center">削除</button>
-                        </form>
-                    </td>
-                </div>
+				</td>
+				<td th:if="${pm}">
+					<form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post" class="text-center" onSubmit="return checkDelete()">
+						<input type="hidden" name="id" th:value="${task.id}" />
+						<button type="submit" class="btn btn-danger text-center">削除</button>
+					</form>
+				</td>
             </tr>
         </table>
         <div style="text-align:center;">

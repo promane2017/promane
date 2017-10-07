@@ -44,12 +44,8 @@
             </tr>
             <tr>
             		<td>期限</td>
-            		<div th:if="${task.deadline==null}">
-					<td>未設定</td>
-				</div>
-				<div th:unless="${task.deadline==null}">
-					<td th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}">期限</td>
-				</div>
+					<td th:if="${task.deadline==null}">未設定</td>
+					<td th:unless="${task.deadline==null}" th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}">期限</td>
             </tr>
         </table>
         <a class="link-setting" th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
