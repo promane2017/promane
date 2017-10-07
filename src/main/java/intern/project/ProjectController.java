@@ -67,6 +67,8 @@ public class ProjectController {
     
     @PostMapping(path = "/projects/delete")
     String delete(@RequestParam Integer id) {
+    		// PM判定
+        if(!projectService.findProject(id).isManager(userService.getLoggedInUserId())) return "errors/not_root";
     		String userId = userService.getLoggedInUserId();
     		Member member = memberService.getMemberByLoginUser(userId, id);
     		if(member.getRoot()) projectService.delete(id);
