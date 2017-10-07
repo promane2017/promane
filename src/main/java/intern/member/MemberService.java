@@ -38,6 +38,10 @@ public class MemberService {
     public void delete(Integer id) {
         memberRepository.delete(id);
     }
+    
+    public Member findOne(Integer id) {
+    		return memberRepository.findOne(id);
+    }
 
     public List<Member> getMembersByProjectId(Integer id) {
         return memberRepository.findByProjectId(id);

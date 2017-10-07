@@ -34,4 +34,6 @@ h2-consoleから手動で変更してください。
 ```
 //user idが1の場合
 UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 1;
+//user idがpromaneの場合
+UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 'promane';
 ```

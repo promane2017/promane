@@ -1,5 +1,8 @@
 package intern.member;
 
+import intern.task.*;
+import intern.request.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +18,10 @@ import java.util.List;
 public class MemberController {
     @Autowired
     MemberService memberService;
+    @Autowired
+    TaskService taskService;
+    @Autowired
+    RequestService requestService;
 
     @ModelAttribute
     MemberForm setUpForm() {
@@ -46,7 +53,19 @@ public class MemberController {
     }
 
     @PostMapping(path = "delete")
-    String delete(@RequestParam Integer memberId) {
+	String delete(@RequestParam Integer memberId) {
+    		Member member = memberService.findOne(memberId);
+    		//プロジェクトからメンバーを削除するときはタスク・リクエストからも消す必要がある
+    		String userId = member.getUser().getId();
+    		for(Task task: member.getProject().getTaskList()) {
+    			Integer taskId = task.getId();
+    			if(taskService.isAlreadyAssigenedUser(userId, taskId)) {
+    				taskService.deleteUser(userId, taskId);
+    			}
+    			if(requestService.isAlreadyRequest(userId, taskId)) {
+    				requestService.deleteRequest(userId, taskId);
+    			}
+    		}
         memberService.delete(memberId);
         return "redirect:/projects/{projectId}/members";
     }
