@@ -5,13 +5,14 @@
 
 ## 起動方法
 ``` terminal
-user:promane user$ ./mvnw spring-boot:run
+$ ./mvnw spring-boot:run
 ```
 
 ## URL一覧
 基本はWebブラウザのアドレスに「localhost:8080/hoge」です。  
 8080ポートをすでに使用している場合はapplication.propertiesを以下のように変更してください。
 ``` application.properties
+//8090にする場合
 server.port = 8090
 ```
 
@@ -41,4 +42,7 @@ UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 'promane';
 ## エラーが出るときは
 データベース系統でエラーが出るときは`target/db`のディレクトリを削除してください。  
 開発の都合上テーブル定義が変更され、整合性エラーが発生する場合があります。  
-2017/10/8 TASKSテーブルのDEADLINEにてNULLを許容するように変更
+2017/10/8 TASKSテーブルのDEADLINEにてNULLを許容するように変更  
+
+
+その他仕様がよくわからなかったりバグや改善点などありましたらお気軽にissueを作って報告してください。
