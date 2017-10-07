@@ -1,6 +1,6 @@
-# promane
-プロジェクトのタスクをマネジメントするWebアプリケーションです。  
-開発に関する情報はWikiを確認してください。  
+# ぷろまね。
+「ぷろまね。」は複数人プロジェクトのタスクをマネジメントするWebアプリケーションです。  
+開発や仕様に関する情報は[Wiki](https://github.com/promane2017/promane/wiki)を確認してください。  
 ユーザ作成画面とログイン画面以外のページへアクセスするにはログインが必要です。
 
 ## 起動方法
@@ -37,3 +37,8 @@ UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 1;
 //user idがpromaneの場合
 UPDATE USERS SET ROLE = 'ADMIN_USER' WHERE ID = 'promane';
 ```
+
+## エラーが出るときは
+データベース系統でエラーが出るときは`target/db`のディレクトリを削除してください。  
+開発の都合上テーブル定義が変更され、整合性エラーが発生する場合があります。  
+2017/10/8 TASKSテーブルのDEADLINEにてNULLを許容するように変更
