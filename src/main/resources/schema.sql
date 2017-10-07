@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     importance          VARCHAR(10)   NOT NULL,
     progress            INTEGER       NOT NULL,
     created_at          TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deadline            DATETIME      NOT NULL,
+    deadline            DATETIME,
     FOREIGN KEY(project_id) REFERENCES projects(id)
 );
 
@@ -62,11 +62,3 @@ CREATE TABLE IF NOT EXISTS notices (
     created_at      TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
     un_read         BIT             NOT NULL
 );
-
-CREATE TABLE IF NOT EXISTS taskuser ( 
-    id               INTEGER       NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-    task_id          INTEGER       NOT NULL, 
-    user_id          VARCHAR(30)   NOT NULL, 
-    FOREIGN KEY(task_id) REFERENCES tasks(id), 
-    FOREIGN KEY(user_id) REFERENCES users(id) 
-); 

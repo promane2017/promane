@@ -1,8 +1,6 @@
 package intern.task;
 
 import lombok.Data;
-import java.util.Date;
-
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.DecimalMax;
@@ -17,9 +15,12 @@ public class TaskForm {
 	
     @Size(min = 0, max = 1000)
     private String description;
-    private Date   deadline;
+    
+    private String   deadline;
+    
     @Pattern(regexp = "high|middle|low")
     private String importance;
+    
     @DecimalMax("100")
     private int    progress;
 }

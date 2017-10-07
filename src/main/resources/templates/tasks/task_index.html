@@ -1,84 +1,136 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="layout/layout"
-      lang="ja">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/layout" lang="ja">
+
 <head>
-    <meta charset="UTF-8"/>
-    <title>Task Index</title>
+    <meta charset="UTF-8" />
+    <title>タスク一覧</title>
+    <script type="text/javascript">
+        <!-- 
+        function checkDelete() {
+            if (window.confirm('削除しますか？')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function checkRequest() {
+            if (window.confirm('申請しますか？')) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        -->
+
+    </script>
 </head>
+
 <body>
-<div layout:fragment="contents">
-<div th:if="${param.success}" class="alert alert-success">
-    taskの作成に成功しました。
-</div>
-<div th:if="${param.success_request}" class="alert alert-success">
-    申請に成功しました。
-</div>
+    <div layout:fragment="contents">
+        <div th:if="${param.success}" class="alert alert-success">
+            taskの作成に成功しました。
+        </div>
+        <div th:if="${param.success_request}" class="alert alert-success">
+            申請に成功しました。
+        </div>
 
-<table class="table table-bordered td_vertical_align_middle">
-    <tr>
-        <th class="text-center">課題名</th>
-        <th class="text-center" width="80">重要度</th>
-        <th class="text-center">課題概要</th>
-        <th class="text-center">開始日</th>
-        <th class="text-center">終了日</th>
-        <th class="text-center" width="300">進捗</th>
-        <th class="text-center" colspan="2">管理</th>
-    </tr>
-    <tr th:each="task : ${tasks}">
-        <td th:text="${task.name}" class="text-center">名前</td>
-        <div th:switch="${task.importance}">
-  		  <td class="danger text-center" th:case="high" th:text="高"></td>
-  		  <td class="warning text-center"  th:case="middle" th:text="中"></td>
-  		  <td class="success text-center" th:case="low" th:text="低"></td>
-		</div>
-        <td th:text="${task.description}" class="text-center">概要</td>
-        <td th:text="${#dates.format(task.createdAt, 'yyyy/MM/dd')}" class="text-center">作成日</td>
-        <td th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
-        <td>
-            <div class="progress progress-striped active center">
-                <div class="progress-bar" th:style="|width: ${task.progress}%|"></div>
+        <table class="table table-bordered td_vertical_align_middle">
+            <tr>
+                <th class="text-center">課題名</th>
+                <th class="text-center" width="80">重要度</th>
+                <th class="text-center">課題概要</th>
+                <th class="text-center">開始日</th>
+                <th class="text-center">終了日</th>
+                <th class="text-center" width="300">進捗</th>
+                <div th:switch="${pm}">
+                    <th th:case="true" class="text-center" colspan="3">管理</th>
+                    <th th:case="false" class="text-center" colspan="2">管理</th>
+                </div>
+			</tr>
+			<tr th:each="task, stat : ${tasks}">
+				<td th:text="${task.name}" class="text-center">名前</td>
+				<div th:switch="${task.importance}">
+                    <td class="danger text-center" th:case="high" th:text="高"></td>
+                    <td class="warning text-center" th:case="middle" th:text="中"></td>
+                    <td class="success text-center" th:case="low" th:text="低"></td>
+				</div>
+				<td th:text="${task.description}" class="text-center">概要</td>
+				<td th:text="${#dates.format(task.createdAt, 'yyyy/MM/dd')}" class="text-center">作成日</td>
+				<td th:if="${task.deadline==null}" class="text-center">未設定</td>
+				<td th:unless="${task.deadline==null}" th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
+                <td>
+                    <div class="progress progress-striped active center">
+                        <div class="progress-bar" th:style="|width: ${task.progress}%|"></div>
+                    </div>
+                </td>
+                <td>
+                    <form th:action="@{/projects/{projectId}/tasks/{taskId}/requests(projectId=${projectId},taskId=${task.id})}" method="post" onSubmit="return checkRequest()">
+                        <input type="hidden" name="id" th:value="${task.id}" />
+                        <div th:switch="${assignedList.get(stat.index)}">
+                            <div th:case="0" class="text-center">
+                                <button type="submit" class="btn btn-success">
+   							       <div class="text-center">　タスク参加申請　</div>
+   						       </button>
+                            </div>
+                            <div th:case="1" class="text-center">
+                                 <button type="submit" class="btn btn-outline-warning" disabled="disabled">
+   						            <div class="text-center">タスク参加申請済み</div>
+                                 </button>
+                            </div>
+                            <div th:case="2" class="text-center">
+                                <button type="submit" class="btn btn-info" disabled="disabled">
+   						             <div class="text-center">　タスク参加済み　</div>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </td>
+                <td>
+					<div th:switch="${assignedList.get(stat.index)}">
+                        	<div th:case="0" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/detail(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-default"><div class="text-center">詳細</div></button>
+                			    </form>		
+                       	</div>
+                       	<div th:case="1" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/detail(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-default"><div class="text-center">詳細</div></button>
+                			    </form>		
+                       	</div>
+                       	<div th:case="2" class="text-center">
+							<form th:action="@{/projects/{projectId}/tasks/{taskId}/edit(projectId=${projectId},taskId=${task.id})}" method="get" class="text-center">
+                  		   		<input type="hidden" name="id" th:value="${task.id}" />
+                        			<button type="submit" class="btn btn-warning"><div class="text-center">編集</div></button>
+                			    </form>		
+                       	</div>
+					</div>
+				</td>
+				<td th:if="${pm}">
+					<form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post" class="text-center" onSubmit="return checkDelete()">
+						<input type="hidden" name="id" th:value="${task.id}" />
+						<button type="submit" class="btn btn-danger text-center">削除</button>
+					</form>
+				</td>
+            </tr>
+        </table>
+        <div style="text-align:center;">
+            <div th:if="${pm}">
+                <form th:action="@{/projects/{projectId}/task(projectId=${projectId})}" method="get">
+                    <button type="submit" class="btn btn-primary btn-lg button-bottom">タスクを追加</button>
+                </form>
+                <form th:action="@{/projects/{projectId}/members(projectId=${projectId})}" method="get">
+                    <button type="submit" class="btn btn-primary btn-lg" th:text="プロジェクトメンバー管理"></button>
+                </form>
             </div>
-        </td>
-        <td>
-            <form th:action="@{/projects/{projectId}/tasks/delete(projectId=${projectId})}" method="post"  class="text-center">
-                <input type="hidden" name="id" th:value="${task.id}" />
-                <button type="submit" class="btn btn-danger" ><div class="text-center">削除</div></button>
-            </form>
-        </td>
-        <td>
-            <form th:action="@{/projects/{projectId}/tasks/{taskId}/edit(projectId=${projectId},taskId=${task.id})}" method="get"  class="text-center">
-                <input type="hidden" name="id" th:value="${task.id}" />
-                <button type="submit" class="btn btn-warning" ><div class="text-center">編集</div></button>
-            </form>
-        </td>
-        <td>
-            <form th:action="@{/projects/{projectId}/tasks/{taskId}/requests(projectId=${projectId},taskId=${task.id})}"
-                  method="post">
-                <input type="hidden" name="id" th:value="${task.id}"/>
-                <button type="submit" class="btn btn-success">
-                    <div class="text-center">タスク参加申請</div>
-                </button>
-            </form>
-        </td>
-    </tr>
-</table>
-<div style="text-align:center;">
-    <form th:action="@{/projects/{projectId}/task(projectId=${projectId})}" method="get">
-        <button type="submit" class="btn btn-primary btn-lg button-bottom">タスクを追加</button>
-    </form>
-    
-    <div th:switch="${pm}">
-   		<form th:action="@{/projects/{projectId}/members(projectId=${projectId})}" method="get">
-  	      <button th:case="true"  type="submit" class="btn btn-primary btn-lg" th:text="プロジェクトメンバ管理"></button>
-  	      <button th:case="false" type="submit" class="btn btn-primary btn-lg" th:text="プロジェクトメンバ一覧"></button>
-  	      <button th:case="*"     type="submit" class="btn btn-primary btn-lg" th:text="${pm}"></button>
-   		</form>
+            <div th:unless="${pm}">
+                <form th:action="@{/projects/{projectId}/members(projectId=${projectId})}" method="get">
+                    <button type="submit" class="btn btn-primary btn-lg" th:text="プロジェクトメンバ一覧"></button>
+                </form>
+            </div>
+        </div>
     </div>
-</div>
-</div>
-
 </body>
 </html>

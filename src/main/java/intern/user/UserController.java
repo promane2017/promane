@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 import java.util.List;
-import java.util.ArrayList;
 
 @Controller
 @RequestMapping("users")
@@ -26,12 +25,18 @@ public class UserController {
 	UserForm setUpForm() {
 		return new UserForm();
 	}
-	
+
 	@GetMapping
 	String list(Model model) {
-		List<User> users = new ArrayList<User>();
+		return "users/user_create";
+	}
+
+	@RequestMapping(path = "userList")
+	String userList(Model model) {
+		//admin判定
 		User user = userService.findUser(userService.getLoggedInUserId());
-		if(user != null && user.getRole().equals("ADMIN_USER"))  users = userService.findUser();	
+		if(user != null && !user.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		List<User> users = userService.findUser();
 		model.addAttribute("users", users);
 		return "users/list";
 	}
@@ -47,17 +52,18 @@ public class UserController {
 		user.setHashedPassword(new Pbkdf2PasswordEncoder().encode(form.getPassword()));
 		user.setRole("ROLE_USER");
 		User check = userService.create(user);
-		if(check == null) {
-			return "redirect:/users?error";
-		}
-        noticeService.create(new Notice(check.getId(), "ぷろまね。ちゃんへようこそ"));
+		if(check == null) return "redirect:/users?error";
 
-		//作成に成功したらsuccessパラメータを付加してリダイレクト
+		noticeService.create(new Notice(check.getId(), "ぷろまね。ちゃんへようこそ！"));
 		return "redirect:/loginForm?success";
 	}
 
 	@GetMapping(path = "edit", params = "form")
 	String editForm(@RequestParam String id, User form) {
+		//adminチェック
+		User loginUser = userService.findUser(userService.getLoggedInUserId());
+		if(loginUser != null && !loginUser.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		
 		User user = userService.findUser(id);
 		BeanUtils.copyProperties(user, form);
 		return "users/edit";
@@ -68,21 +74,26 @@ public class UserController {
 		if (result.hasErrors()) {
 			return editForm(id, form);
 		}
-		User user = userService.findUser(id);
-		user.setName(form.getName());
-		userService.update(user);
-		return "redirect:/users";
+		
+		//adminチェック
+		User loginUser = userService.findUser(userService.getLoggedInUserId());
+		if(loginUser != null && !loginUser.getRole().equals("ADMIN_USER")) return "errors/not_admin";
+		
+		User editUser = userService.findUser(id);
+		editUser.setName(form.getName());
+		userService.update(editUser);
+		return "redirect:/users/userList";
 	}
 
 	@RequestMapping(path = "edit", params = "goToTop")
 	String goToTop(){
-		return "redirect:/users";
+		return "redirect:/users/userList";
 	}
 
 	@PostMapping(path = "delete")
 	String delete(@RequestParam String id) {
 		User user = userService.findUser(userService.getLoggedInUserId());
 		if(user != null && user.getRole().equals("ADMIN_USER")) userService.delete(id);
-		return "redirect:/users";
+		return "redirect:/users/userList";
 	}
 }

@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.stream.Collectors;
 
 /**
@@ -29,8 +32,6 @@ public class TaskController {
     @Autowired
     MemberRepository memberRepository;
     @Autowired
-    TaskuserService taskuserService;
-    @Autowired
     MemberService memberService;
     @Autowired
     RequestService requestService;
@@ -39,30 +40,53 @@ public class TaskController {
     @Autowired
     ProjectService projectService;
 
-    @GetMapping("tasks/index")
+    @GetMapping("tasks")
     String list(Model model, @PathVariable("projectId") Integer projectId) {
+    		String loginedId = userService.getLoggedInUserId();
+
+    		//プロジェクト参加済み判定
+    		Member myProjectMemberData = memberService.getMemberByLoginUser(loginedId, projectId);
+    		if(myProjectMemberData == null) return "errors/project_not_assign";
+
+    		// プロジェクトのタスク一覧取得
         List<Task> tasks = taskService.findTask(projectId);
         model.addAttribute("tasks", tasks);
 
+        // タスクの参加・申請済み判定 [0なら申請可能/1なら申請済み/2なら参加済み]
+        List<Integer> assignedList = new ArrayList<Integer>();
+        for(Task task: tasks) {
+        		if(!taskService.isAlreadyAssigenedUser(loginedId, task.getId())) {
+        			if(!requestService.isAlreadyRequest(loginedId, task.getId())) {
+        				assignedList.add(0);
+        			} else assignedList.add(1);
+        		} else assignedList.add(2);
+        }
+        model.addAttribute("assignedList", assignedList);
+
+        // PM判定
         Project project = projectService.findProject(projectId);
-        model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+        model.addAttribute("pm", project.isManager(loginedId));
         return "tasks/task_index";
     }
 
     @PostMapping(path = "tasks/create")
-    String create(
-            @Validated TaskForm form,
-            BindingResult result,
-            Model model,
-            @PathVariable("projectId") Integer projectId) {
-        if (result.hasErrors()) {
-            return null;
-        }
+    String create(@Validated TaskForm form, BindingResult result, Model model, @PathVariable("projectId") Integer projectId) throws ParseException {
+        if (result.hasErrors()) return null;
+
+        // PM判定
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         Task task = new Task();
         task.setName(form.getName());
         task.setDescription(form.getDescription());
         task.setImportance(form.getImportance());
-        task.setDeadline(form.getDeadline());
+        
+        //deadlineが設定されている場合
+        if(!form.getDeadline().equals("")) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
+            Date deadLine = sdf.parse(form.getDeadline());
+            task.setDeadline(deadLine);        	
+        }
+        
         if (taskService.findTask(projectId) != null) {
             task.setProject(projectService.findProject(projectId));
         } else {
@@ -74,23 +98,24 @@ public class TaskController {
                 .map(member->{return member.getUser();})
                 .forEach(user->{
                     noticeService.create(new Notice(user.getId(),
-                            "<a href=\"/projects/"+projectId+"/tasks/index\">"
+                            "<a href=\"/projects/"+projectId+"/tasks\">"
                     +task.getProject().getName()+"にタスクが追加されました</a>"));
                 });
+        
         //作成に成功したらsuccessパラメータを付加してリダイレクト
-        return "redirect:index?success";
+        return "redirect:?success";
     }
 
     @RequestMapping("tasks/{taskId}/assignees")
     @GetMapping
-    String getMemberList(Model model,
-                         @PathVariable("projectId") Integer projectId,
-                         @PathVariable("taskId") Integer taskId) {
+    String getMemberList(Model model, @PathVariable("projectId") Integer projectId, @PathVariable("taskId") Integer taskId) {
 
         // root check
         String loginedId = userService.getLoggedInUserId();
         if (!userService.checkRoot(loginedId, projectId)) {
-            return "projects/tasks/not_root";
+    			//プロジェクト参加済み判定
+    			if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+            return "errors/not_root";
         }
 
         List<User> assignedUsers = taskService.findById(taskId).getUserList();
@@ -105,20 +130,28 @@ public class TaskController {
         //requestメンバー
         List<Request> requests = requestService.findRequest(taskId);
         model.addAttribute("requests", requests);
+        
+        //PMがアサインしてるか否か
+        model.addAttribute("pmAlreadyAssign", taskService.isAlreadyAssigenedUser(loginedId, taskId));
         return "projects/tasks/assignees";
     }
 
     @PostMapping(path = "tasks/{taskId}/assignees/delete")
     String deleteTaskUser(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId) {
+    		// PM判定
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+
         taskService.deleteUser(userId, taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
     }
 
     @PostMapping(path = "tasks/{taskId}/assignees/assign")
-    String userAssignToTask(@RequestParam String userId,
-                            @PathVariable("projectId") Integer projectId,
-                            @PathVariable("taskId") Integer taskId) {
+    String userAssignToTask(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
+    		@PathVariable("taskId") Integer taskId) {
+    		// PM判定
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+
         taskService.assignUser(userId, taskId);
         requestService.deleteRequest(userId,taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
@@ -126,56 +159,85 @@ public class TaskController {
 
     @GetMapping(path = "task")
     String taskCreate(@PathVariable("projectId") Integer projectId) {
+    		//PM判定
+    		if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
         return "tasks/task_create";
+    }
+    
+    @GetMapping("tasks/{taskId}/detail")
+    String detail(@PathVariable("projectId") Integer projectId,
+            @PathVariable("taskId") Integer taskId, Model model) {
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+        Task task = taskService.findById(taskId);
+        model.addAttribute("task", task);
+        
+        //PM判定
+        Project project = projectService.findProject(projectId);
+        model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+    		
+    		return "tasks/task_detail";
     }
 
     @GetMapping(path = "tasks/{taskId}/edit")
     String taskEdit(@PathVariable("projectId") Integer projectId,
         @PathVariable("taskId") Integer taskId, Model model) {
+    		//プロジェクト参加済み判定
+    		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+
         Task task = taskService.findById(taskId);
-        Integer progress = task.getProgress();
-        model.addAttribute("progress", progress);
-
-        List<Comment> comments = task.getComments();
-        String logged_in_user_id = userService.getLoggedInUserId();
-        model.addAttribute("logged_in_user_id", logged_in_user_id);
-        model.addAttribute("comments", comments);
-
+        model.addAttribute("task", task);
+        
         Project project = projectService.findProject(projectId);
         model.addAttribute("pm", project.isManager(userService.getLoggedInUserId()));
+
+        if (!taskService.isAlreadyAssigenedUser(userService.getLoggedInUserId(), taskId)) model.addAttribute("assigned", true);
+        else model.addAttribute("assigned", false);
         return "tasks/edit";
     }
+
     @PostMapping("tasks/delete")
     String taskDelete(@PathVariable Integer projectId, @RequestParam Integer id) {
+    		// PM判定
+        if(!projectService.findProject(projectId).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+
         taskService.deleteTask(id);
-        return "redirect:index";
+        return "redirect:";
     }
 
     @PostMapping(path = "tasks/{taskId}/update")
-    String update(@Validated TaskEditForm form, BindingResult result,
-                  @PathVariable("projectId") Integer projectId,//TODO:
-                  @PathVariable("taskId") Integer taskId, Model model) {
-        if (result.hasErrors()) {
-            return null;
-        }
-        String logged_in_user_id = userService.getLoggedInUserId();
-        model.addAttribute("logged_in_user_id", logged_in_user_id);
+    String update(@Validated TaskEditForm form, BindingResult result, @PathVariable("projectId") Integer projectId,
+                  @PathVariable("taskId") Integer taskId, Model model) throws ParseException {
+        if (result.hasErrors()) return null;
 
-        if (taskuserService.isAlreadyAssigenedUser(logged_in_user_id, taskId)) {
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+
+        String loggedInUserId = userService.getLoggedInUserId();
+        String param="";
+        if (taskService.isAlreadyAssigenedUser(loggedInUserId, taskId)) {
             taskService.update(form, taskId);
+            param = "?updated";
+        }else{
+        		model.addAttribute("assigned", false);
         }
         Integer progress = taskService.findProgress(taskId);
         model.addAttribute("progress", progress);
         List<Comment> comments = taskService.findComment(taskId);
         model.addAttribute("comments", comments);
-        taskService.update(form, taskId);
-        return "tasks/edit";
+
+        return "redirect:edit"+param;
     }
 
     @PostMapping(path = "tasks/{taskId}/requests")
     String taskRequest(@PathVariable("projectId") Integer projectId,
                        @PathVariable("taskId") Integer taskId) {
+		//プロジェクト参加済み判定
+		if(memberService.getMemberByLoginUser(userService.getLoggedInUserId(), projectId) == null) return "errors/project_not_assign";
+
         User user = userService.findUser(userService.getLoggedInUserId());
+        Task task = taskService.findById(taskId);
+        String taskName = task.getName();
         if (!requestService.isAlreadyRequest(user.getId(), taskId)) {
             Request request = new Request();
             request.setTask(taskService.findById(taskId));
@@ -186,19 +248,19 @@ public class TaskController {
             for (Member member : MemberList) {
                 if (userService.checkRoot(member.getUser().getId(), projectId)) {
                     notice.setUserId(member.getUser().getId());
-                    notice.setMessage("タスク申請が来ています");
+                    notice.setMessage("<a href=\"/projects/"+projectId+"/tasks/"+taskId+"/edit\">タスク「"+taskName+"」へのアサイン申請が来ています</a>");
                     notice.setCreatedAt(new Date());
                     notice.setUnRead(true);
                     noticeService.create(notice);
                 }
             }
         }
-        return "redirect:/projects/{projectId}/tasks/index?success_request";
+        return "redirect:/projects/{projectId}/tasks?success_request";
     }
+
     @PostMapping(path = "tasks/{taskId}/assignees/request_delete")
-    String deleteRequest(@RequestParam String userId,
-                          @PathVariable("projectId") Integer projectId,
-                          @PathVariable("taskId") Integer taskId) {
+    String deleteRequest(@RequestParam String userId, @PathVariable("projectId") Integer projectId,
+                         @PathVariable("taskId") Integer taskId) {
         requestService.deleteRequest(userId,taskId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/assignees";
     }
