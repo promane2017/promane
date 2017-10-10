@@ -17,8 +17,8 @@ public class NoticeService {
     NoticeRepository noticeRepository;
 
     public List<Notice> getNotice(String id) {
-        Pageable topfifty=new PageRequest(0,50);
-        List<Notice> notices = noticeRepository.findByuserIdOrderByCreatedAtDesc(id,topfifty);
+        Pageable topfifty = new PageRequest(0, 50);
+        List<Notice> notices = noticeRepository.findByuserIdOrderByCreatedAtDesc(id, topfifty);
         setAlreadyRead(notices);
         return notices;
     }

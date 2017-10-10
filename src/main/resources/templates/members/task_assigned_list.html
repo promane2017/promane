@@ -1,35 +1,35 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="layout/layout"
-      lang="ja">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/layout" lang="ja">
+
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <title>参加タスク一覧</title>
-   </head>
+</head>
+
 <body>
-<div layout:fragment="contents">
-<div class="container">
-    <h1>参加タスク一覧</h1>
+    <div layout:fragment="contents">
+        <div class="container">
+            <h1>参加タスク一覧</h1>
             <table class="table table-striped table-bordered table-condensed" style="table-layout:fixed;width:100%;">
-            <tr>
-                <th>タスク名</th>
-                <th>進捗</th>
-                <th>概要</th>
-                <th class="text-center">期限</th>
-            </tr>
-            <tr th:each="task : ${assignedTaskList}">
-                <td th:text="${task.getName()}">タスク名</td>
-                <td th:text="${task.getDescription()}">概要</td>
-                <td th:text="${task.getProgress()}+'%'">進捗</td>
-				<td th:if="${task.getDeadline()==null}" class="text-center">未設定</td>
-				<td th:unless="${task.getDeadline()==null}" th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
-            </tr>
-        </table>
-    <a th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a><br/>
-    <a th:href="@{/projects/{projectId}/members(projectId=${projectId})}">メンバー管理画面に戻る</a>
-</div>
-</div>
+                <tr>
+                    <th>タスク名</th>
+                    <th>進捗</th>
+                    <th>概要</th>
+                    <th class="text-center">期限</th>
+                </tr>
+                <tr th:each="task : ${assignedTaskList}">
+                    <td th:text="${task.getName()}">タスク名</td>
+                    <td th:text="${task.getDescription()}">概要</td>
+                    <td th:text="${task.getProgress()}+'%'">進捗</td>
+                    <td th:if="${task.getDeadline()==null}" class="text-center">未設定</td>
+                    <td th:unless="${task.getDeadline()==null}" th:text="${#dates.format(task.deadline, 'yyyy/MM/dd')}" class="text-center">締め切り</td>
+                </tr>
+            </table>
+            <a th:href="@{/projects/{projectId}/tasks(projectId=${projectId})}">タスク一覧画面に戻る</a>
+            <br/>
+            <a th:href="@{/projects/{projectId}/members(projectId=${projectId})}">メンバー管理画面に戻る</a>
+        </div>
+    </div>
 </body>
+
 </html>

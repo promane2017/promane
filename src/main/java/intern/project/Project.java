@@ -33,24 +33,24 @@ public class Project {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    
-    @OneToMany(mappedBy="project", cascade = CascadeType.REMOVE)
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<Member> memberList;
-    
-    @OneToMany(mappedBy="project", cascade = CascadeType.REMOVE)
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.REMOVE)
     private List<Task> taskList;
-    
+
     public Project(Integer id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.createdAt = new Date();
     }
-	
-	public Boolean isManager(String userId){
-		List<Member> members = this.getMemberList();
-        for(Member member: members)
-            if(member.getRoot() && member.getUser().getId().equals(userId)) return true;
+
+    public Boolean isManager(String userId) {
+        List<Member> members = this.getMemberList();
+        for (Member member : members)
+            if (member.getRoot() && member.getUser().getId().equals(userId)) return true;
         return false;
-	}
+    }
 }

@@ -9,6 +9,6 @@ import java.util.List;
  * Created by --- on 17/09/05.
  */
 public interface NoticeRepository extends JpaRepository<Notice, Integer> {
-    public List<Notice> findByuserIdOrderByCreatedAtDesc(String id,Pageable pageable);
-    public List<Notice> findByUserIdAndUnReadTrueOrderByCreatedAtDesc(String id);
+	public List<Notice> findByuserIdOrderByCreatedAtDesc(String id, Pageable pageable);
+	public List<Notice> findByUserIdAndUnReadTrueOrderByCreatedAtDesc(String id);
 }

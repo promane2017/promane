@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<head>
-		<meta charset="utf-8"/>
-		<title>ログインフォーム</title>
-		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}"/>
-        <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}"/>
-        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}"/>
-	</head>
 
-	<body>
-		<div th:if="${param.success}" class="alert alert-success">
-                ユーザの作成に成功しました。
-        </div>
-		<div class="container">
-			<h1>ログインフォーム</h1>
-			<form class="form-signin" method="post" th:action="@{/login}">
-				<div th:if="${param.error}" class="alert alert-danger">
-					ユーザ名またはパスワードが正しくありません。
-				</div>
-				<input type="text" class="form-control input-box" name="username" placeholder="User ID" required="required" autofocus="autofocus"/>
-				<input type="password" class="form-control input-box" name="password" placeholder="Password" required="required"/>
-				<button class="btn btn-lg btn-primary btn-block" type="submit">ログイン</button>
-				<a class="btn btn-lg btn-primary btn-block" href="/users" role="button">アカウント新規作成</a>
-			</form>
-		</div>
-	</body>
+<head>
+    <meta charset="utf-8" />
+    <title>ログインフォーム</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" href="../../static/css/style.css" th:href="@{/css/style.css}" />
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" th:href="@{/webjars/bootstrap/3.3.7/css/bootstrap-theme.min.css}" />
+</head>
+
+<body>
+    <div th:if="${param.success}" class="alert alert-success">
+        ユーザの作成に成功しました。
+    </div>
+    <div class="container">
+        <h1>ログインフォーム</h1>
+        <form class="form-signin" method="post" th:action="@{/login}">
+            <div th:if="${param.error}" class="alert alert-danger">
+                ユーザ名またはパスワードが正しくありません。
+            </div>
+            <input type="text" class="form-control input-box" name="username" placeholder="User ID" required="required" autofocus="autofocus" />
+            <input type="password" class="form-control input-box" name="password" placeholder="Password" required="required" />
+            <button class="btn btn-lg btn-primary btn-block" type="submit">ログイン</button>
+            <a class="btn btn-lg btn-primary btn-block" href="/users" role="button">アカウント新規作成</a>
+        </form>
+    </div>
+</body>
+
 </html>

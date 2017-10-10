@@ -10,10 +10,10 @@ import javax.validation.constraints.Size;
  */
 @Data
 public class ProjectForm {
-    @NotNull
-    @Size(min = 1,max = 20)
-    private String project_name;
-    @NotNull
-    @Size(min = 1,max = 200)
-    private String project_description;
+	@NotNull
+	@Size(min = 1, max = 20)
+	private String project_name;
+	@NotNull
+	@Size(min = 1, max = 200)
+	private String project_description;
 }

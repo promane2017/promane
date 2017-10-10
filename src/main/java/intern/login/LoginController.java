@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
- * 
+ *
  * ログインフォームへのGETリクエストに対するレスポンス
  * ビュー(loginForm.html)を返す
  *

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 
 /**
- * 
+ *
  * usernameとして入力フォームから取得したユーザ情報をリポジトリから取得
  *
  */
@@ -20,9 +20,9 @@ public class LoginUserDetailsService implements UserDetailsService {
 	UserService userService;
 
 	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException{
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userService.findUser(username);
-		if(user == null) {
+		if (user == null) {
 			throw new UsernameNotFoundException("The requested user is not found.");
 		}
 		return new LoginUserDetails(user);

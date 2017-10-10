@@ -16,7 +16,7 @@ public class UserForm {
 	@NotNull
 	@Size(min = 1, max = 30)
 	private String name;
-	
+
 	@NotNull
 	@Size(min = 1, max = 1000)
 	private String password;

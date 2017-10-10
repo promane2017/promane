@@ -24,20 +24,20 @@ public class ProjectService {
     }
     public List<Project> getProjectsByUserId(String id) {
         return memberRepository.findByUserId(id)
-            .stream()
-            .map(member -> { return member.getProject(); })
-            .collect(Collectors.toList());
+               .stream()
+               .map(member -> { return member.getProject(); })
+               .collect(Collectors.toList());
     }
 
     public Project create(Project project) {
         return projectRepository.save(project);
     }
-    
-    public Project findProject(Integer id){
-        return 	projectRepository.findOne(id);
+
+    public Project findProject(Integer id) {
+        return  projectRepository.findOne(id);
     }
-    
-    public void delete(Integer id){
+
+    public void delete(Integer id) {
         projectRepository.delete(id);
     }
 

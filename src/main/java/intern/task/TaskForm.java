@@ -12,15 +12,15 @@ import javax.validation.constraints.DecimalMax;
 public class TaskForm {
     @Size(min = 1, max = 50)
     private String name;
-	
+
     @Size(min = 0, max = 1000)
     private String description;
-    
+
     private String   deadline;
-    
+
     @Pattern(regexp = "high|middle|low")
     private String importance;
-    
+
     @DecimalMax("100")
     private int    progress;
 }

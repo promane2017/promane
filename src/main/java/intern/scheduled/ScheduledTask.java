@@ -26,14 +26,13 @@ public class ScheduledTask {
         Date today = DateUtils.createToday().getTime();
         List<Task> tasks = taskRepository.findAll();
         for (Task task : tasks) {
-            if(task.getDeadline() == null) continue;
+            if (task.getDeadline() == null) continue;
             long date = (task.getDeadline().getTime() - today.getTime()) / (24 * 60 * 60 * 1000);
             if (date > 3 || date < 0) continue;
             List<User> users = task.getUserList();
             for (User user : users) {
                 noticeRepository.save(new Notice(user.getId(),
-                    "<a href=\"/projects/" + task.getProject().getId() + "/tasks/" + task.getId()
-                        + "/edit\">" + task.getName() + "の期限まであと" + date + "日です</a>"));
+                                                 "<a href=\"/projects/" + task.getProject().getId() + "/tasks/" + task.getId() + "/edit\">" + task.getName() + "の期限まであと" + date + "日です</a>"));
             }
         }
     }

@@ -15,12 +15,12 @@ public class RequestService {
     @Autowired
     RequestRepository requestRepository;
 
-    public Request create(Request request){
+    public Request create(Request request) {
         return requestRepository.save(request);
     }
 
-    public void deleteRequest(String userId,Integer taskId){
-        requestRepository.deleteByUserIdAndTaskId(userId,taskId);
+    public void deleteRequest(String userId, Integer taskId) {
+        requestRepository.deleteByUserIdAndTaskId(userId, taskId);
     }
 
     public List<Request> findRequest(Integer id) {

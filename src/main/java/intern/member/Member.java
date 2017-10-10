@@ -15,14 +15,14 @@ public class Member {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Column
     private Boolean root;
-    
+
     @ManyToOne(targetEntity = Project.class)
     @JoinColumn(nullable = false)
     private Project project;
-    
+
     @ManyToOne(targetEntity = User.class)
     @JoinColumn(nullable = false)
     private User user;

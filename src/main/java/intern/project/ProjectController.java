@@ -49,29 +49,29 @@ public class ProjectController {
 
     @GetMapping(path = "/projects")
     String list(Principal principal, Model model) {
-    		//参加プロジェクト一覧
+        //参加プロジェクト一覧
         List<Project> projects = projectService.getProjectsByUserId(principal.getName());
         model.addAttribute("projects", projects);
-        
+
         //それぞれのプロジェクトのPM判定
         List<Boolean> pms = new ArrayList<>();
-        for(Project p : projects) pms.add(p.isManager(userService.getLoggedInUserId()));
+        for (Project p : projects) pms.add(p.isManager(userService.getLoggedInUserId()));
         model.addAttribute("pm", pms);
-        
+
         //admin判定
-		User user = userService.findUser(userService.getLoggedInUserId());
-		if(user != null && user.getRole().equals("ADMIN_USER")) model.addAttribute("admin", true);
-		else model.addAttribute("admin", false);
+        User user = userService.findUser(userService.getLoggedInUserId());
+        if (user != null && user.getRole().equals("ADMIN_USER")) model.addAttribute("admin", true);
+        else model.addAttribute("admin", false);
         return "projects/list";
     }
-    
+
     @PostMapping(path = "/projects/delete")
     String delete(@RequestParam Integer id) {
-    		// PM判定
-        if(!projectService.findProject(id).isManager(userService.getLoggedInUserId())) return "errors/not_root";
-    		String userId = userService.getLoggedInUserId();
-    		Member member = memberService.getMemberByLoginUser(userId, id);
-    		if(member.getRoot()) projectService.delete(id);
-    	return "redirect:/projects";
+        // PM判定
+        if (!projectService.findProject(id).isManager(userService.getLoggedInUserId())) return "errors/not_root";
+        String userId = userService.getLoggedInUserId();
+        Member member = memberService.getMemberByLoginUser(userId, id);
+        if (member.getRoot()) projectService.delete(id);
+        return "redirect:/projects";
     }
 }
