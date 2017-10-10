@@ -13,8 +13,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class InternApplication implements CommandLineRunner {
-    @Autowired
-    ProjectRepository projectRepository;
+	@Autowired
+	ProjectRepository projectRepository;
 	@Autowired
 	UserRepository userRepository;
 	@Autowired
@@ -24,8 +24,8 @@ public class InternApplication implements CommandLineRunner {
 	@Autowired
 	ProjectService projectService;
 
-    @Override
-    public void run(String... strings) throws Exception {
+	@Override
+	public void run(String... strings) throws Exception {
 	}
 
 	public static void main(String[] args) {

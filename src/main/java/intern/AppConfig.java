@@ -8,8 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @Configuration
 @EnableScheduling
 public class AppConfig {
-    @Bean
-    public ScheduledTask task() {
-        return new ScheduledTask();
-    }
+	@Bean
+	public ScheduledTask task() {
+		return new ScheduledTask();
+	}
 }

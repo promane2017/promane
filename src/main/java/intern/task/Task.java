@@ -42,13 +42,15 @@ public class Task {
     @Temporal(TemporalType.TIMESTAMP)
     private Date deadline;
 
-    @OneToMany(fetch=FetchType.EAGER)
+    @OneToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "assignees", joinColumns = {
-			@JoinColumn(name = "task_id", referencedColumnName = "id") }, inverseJoinColumns = {
-					@JoinColumn(name = "user_id", referencedColumnName = "id") })
+        @JoinColumn(name = "task_id", referencedColumnName = "id")
+    }, inverseJoinColumns = {
+        @JoinColumn(name = "user_id", referencedColumnName = "id")
+    })
     private List<User> userList;
 
-    @OneToMany(mappedBy="task", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "task", cascade = CascadeType.REMOVE)
     private List<Comment> comments;
 
     @ManyToOne
@@ -59,8 +61,8 @@ public class Task {
     }
 
     public void deleteUser(User user) {
-		int index = userList.indexOf(user);
-		if (index != -1) userList.remove(index);
+        int index = userList.indexOf(user);
+        if (index != -1) userList.remove(index);
     }
 
     public Task() {

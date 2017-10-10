@@ -58,10 +58,10 @@ public class TaskService {
         task.setDescription(taskEditForm.getDescription());
         task.setProgress(taskEditForm.getProgress());
         //deadlineが設定されている場合
-        if(!taskEditForm.getDeadline().equals("")) {
+        if (!taskEditForm.getDeadline().equals("")) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
             Date deadLine = sdf.parse(taskEditForm.getDeadline());
-            task.setDeadline(deadLine);    	
+            task.setDeadline(deadLine);
         }
         taskRepository.save(task);
 
@@ -75,8 +75,8 @@ public class TaskService {
 
             task.getUserList().forEach(user -> {
                 noticeRepository.save(new Notice(user.getId(),
-                    "<a href=\"/projects/" + task.getProject().getId() + "/tasks/" + task.getId()
-                        + "/edit\">" + task.getName() + "にコメントが追加されました</a>"));
+                "<a href=\"/projects/" + task.getProject().getId() + "/tasks/" + task.getId()
+                + "/edit\">" + task.getName() + "にコメントが追加されました</a>"));
             });
         }
     }
@@ -86,15 +86,15 @@ public class TaskService {
     }
 
     public List<Comment> findComment(Integer task_id) {
-    		Task task = findById(task_id);
+        Task task = findById(task_id);
         List<Comment> comments = task.getComments();
         return comments;
     }
 
-    public boolean isAlreadyAssigenedUser(String loggedInUserId, Integer taskId){
-      Task task = findById(taskId);
-      List<User> assignedUsers = task.getUserList();
-      for (User user : assignedUsers) if(user.getId().equals(loggedInUserId)) return true;
-      return false;
+    public boolean isAlreadyAssigenedUser(String loggedInUserId, Integer taskId) {
+        Task task = findById(taskId);
+        List<User> assignedUsers = task.getUserList();
+        for (User user : assignedUsers) if (user.getId().equals(loggedInUserId)) return true;
+        return false;
     }
 }

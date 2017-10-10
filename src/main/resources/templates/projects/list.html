@@ -1,25 +1,20 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorator="layout/layout"
-      lang="ja">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorator="layout/layout" lang="ja">
 
 <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
     <title>プロジェクト一覧</title>
-    
-    <script type="text/javascript"> 
-<!-- 
-function checkDelete(){
-	if(window.confirm('削除しますか？')){
-		return true;
-	} else {
-		return false;
-	}
-}
- -->
-	</script>
+    <script type="text/javascript">
+    <!-- 
+    function checkDelete() {
+        if (window.confirm('削除しますか？')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    -->
+    </script>
 </head>
 
 <body>
@@ -61,9 +56,9 @@ function checkDelete(){
             </table>
             <a class="link-setting" href="/projects/entry">プロジェクトを作成する</a>
             <div th:if="${admin}">
-          		 <hr/>	
-        		   	 <a href="users/userList">[管理者専用]ユーザ管理ページ</a>
-           	</div>
+                <hr/>
+                <a href="users/userList">[管理者専用]ユーザ管理ページ</a>
+            </div>
         </div>
     </div>
 </body>

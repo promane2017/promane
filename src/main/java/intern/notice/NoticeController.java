@@ -27,10 +27,10 @@ public class NoticeController {
 //                                   .limit(50)
 //                                   .collect(Collectors.toList());
         noticeService.getNotice(principal.getName())
-            .stream()
-            .skip(50)
-            .collect(Collectors.toList())
-            .forEach(notice -> { noticeService.delete(notice.getId()); });
+        .stream()
+        .skip(50)
+        .collect(Collectors.toList())
+        .forEach(notice -> { noticeService.delete(notice.getId()); });
         model.addAttribute("unReadSize", unReadSize);
         model.addAttribute("notices", notices);
         return "notices/list";

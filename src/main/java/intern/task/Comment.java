@@ -20,7 +20,7 @@ public class Comment {
     @Id
     @GeneratedValue
     private Integer id;
-    
+
     @Column(nullable = false)
     private String content;
 
@@ -30,9 +30,9 @@ public class Comment {
 
 
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(nullable = false, name = "user_id")
     private User user;
-    
+
     @ManyToOne
     private Task task;
 }
